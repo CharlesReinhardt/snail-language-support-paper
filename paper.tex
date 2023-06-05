@@ -1,5 +1,8 @@
 \documentclass{article}
 
+\usepackage{cite}
+\usepackage{hyperref}
+
 \title{Developing a Visual Studio Code Language Support Extension for the Snail Programming Language}
 \author{Charles Reinhardt}
 
@@ -12,4 +15,26 @@
 
 \end{abstract}
 
+\section{Introduction}
+
+Much of software development in the present day takes place in integrated development environments (IDEs) \cite{JetBrains_2019}. An IDE is a collection of software development tools, such as a code editor, debugger, and build system, often unified under a similar user interface, with te goal of simplifying the software development process and enhancing developer productivity \cite{Gillis_Silverthorne_2018,Shyniaieva_2023}. In addition to compiling these tools together, many IDEs also offer advanced features within their code editors such as syntax highlighting, code auto-completion, and error-checking diagnostics. Today, there are any number of different IDEs available for use with any given programming language, many offered as freely-downloadable for public use. For example, a developer looking to write code in Java may choose to do so in Eclipse, IntelliJ IDEA, or BlueJ \cite{EclipseFoundation_2023, JetBrains_2023,KingsProgrammingEducationToolsGroup_2022}. With so many high quality IDEs available today, it is no surprise that 75\% of software developers today use an IDE in their everyday work \cite{JetBrains_2019}. Clearly, the IDE has become an integral part of the software development process today \cite{Vaniukov_2023}. 
+
+Visual Studio Code (VS Code), is a popular, open source text editor maintained by Microsoft \cite{StackOverflow_2022,Microsoft_2023a}. When first downloaded, VS Code is a lightweight text editor with minimal features. However, a number of community-built, freely downloadable extensions offer advanced langauge features. These extensions can be dowloaded on VS Code's online extension marketplace, and can turn VS Code into a very fast ,robust, and powerful development environment for any programming task or language \cite{Microsoft_2023b}. 
+
+The snail programming language (Strings Numbers Arrays and Inheritance Language) is a simple, object-oriented programming language meant to be implemented in a one-semester undergraduate course \cite{Angstadt_2023a}. In order to be implemented in a short time frame, snail is defined by limited features and a relatively annoying syntax. While this design makes snail easier to implement, it makes it hard for a develoepr to write programs in snail.
+
+Currently, there are no tools to offer advanced langauge support for the snail language. This is no surprise, as snail has a small user base and was first released in February 2022 \cite{Angstadt_2023b}. With no external support for the language, software developers are taken out of their comfort zone and are offered no guidance when navigating the snail language.
+
+This report presents the Snail Language Support VS Code extension, which seeks to address the lack of programming support tools for the snail programming language. Snail Langauge Support provides several important features to make programming in the snail language easier. First, it features syntax highlighting to make reading snail code easier and help highlight key structures or keywords of the language. Next, it features rudimentary auto completion with auto-closing brackets, braces, and quotes, as well as if-else, while loop, and class definition snippets, reducing the burden of memorizing snail's strict and unintuitive syntax. The extension also has automatic, real-time error checking diagnostics that allow a user to see syntax or parse errors in a snail program before running it for themselves. Finally, the extension is structured to support a full debugger with breakpoints, step-in, step-over, and step-out functionality. 
+
+This paper will outline the process of building the Snail Language Support VS Code extension. Specificaly, we will introduce the structure of a VS Code extension that is meant to add support for new programming langauges. We will also discuss how this extension uses VS Code's language server protocol (LSP) to provide realtime error diagnostics \cite{Microsoft_2022}. We will address how the Snail Language Support extension may be further developed to include debugging support with breakpoints, step in/out behavior, and variable inspection, particularly highlighting the rolw of VS Code's debug adapter protocol DAP \cite{Microsoft_2021}. Finally, we will review good software development practices such as version control and documentation. 
+
+\section{Background}
+
+
+%== BIBLIOGRAPHY ==%
+\newpage
+
+\bibliography{refs.bib}
+\bibliographystyle{plain}
 \end{document}
