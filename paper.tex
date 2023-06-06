@@ -32,7 +32,19 @@ This paper will outline the process of building the Snail Language Support VS Co
 
 \section{Background}
 
+In this section, we will discuss the history of integrated development environments (IDEs) and debuggers, and how they both assist software developers today. We will also discuss Visual Studio Code (VS Code) in more detail, identifying the technologies that power VS Code. 
+
 \subsection{History of the Modern Integrated Development Environment}
+
+The first programming environment to remotely resemble a modern IDE was the Dartmouth BASIC programming language run on the Dartmouth Time Sharing System (DTSS), developed in the mid 1960s \cite{KemenyKurtz_1968, Kurtz_1978}. Dartmouth BASIC was an example of a compile and go system, where program compilation was not separated from program execution \cite{Weik_2001}. Additionally, the DTSS also placed focus on making sharing time on a single university computer a simpler task, in order to help make programming more accessible to novices. This makes the DTSS an early example of combining multiple software development tasks into a single programming environment.
+
+Borland's TurboPascal takes this idea one step further. Released in 1983, TurboPascal featured a Pascal compiler, code editor, file navigation user interface, and a rudimentary debugger \cite{Gajic_2017, Intersimone_2010, Wadlow_1984}. This time period would also see language-specific IDEs in Microsoft's Visual BASIC 1.0, Microsoft's QuickC, and Borland's Turbo C/C++, all featuring similar characteristics of early IDEs \cite{Burgwin_2013, Plant_Murrell_2007, Posch_2023, Forer_Petreley_1991}.
+
+While early IDEs certainly had their merits, they usually only supported one programming language. Microsoft's Visual Studio, released in 1997, was one of the first IDEs to package support for a variety of programming languages in one piece of software \cite{Microsoft_1997}. Visual Studio also featured extensive tools to aid in development for software on the early internet. 
+T
+oday, we see a trend towards open source IDEs such as Eclipse, NetBeans, or VS Code \cite{Apache_2023, EclipseFoundation_2023, Microsoft_2023a}. Even open source editors such as these include advanced development features such as an intelligent code editor, debugging tools, and version control integration. Many of these editors have advanced features within their code editors, providing functions such syntax highlighting, code autocompletion, and realtime error diagnostics. 
+
+There are many benefits to developing software using modern IDEs. By bundling code editing, build systems, and program execution into one tool, modern IDEs reduce the time and effort a developer needs to put forth in order to test a piece of code \cite{Gillis_Silverthorne_2018}. This also reduces the number of decisions a developer has to make while developing code, which can help increase productivity. Using an IDE can also standardize the software development process, by either helping a group of people use a consistent UI (and know how to help eachother), or allow a developer to avoid switching applications to complete a single task \cite{Veracode_2020}. 
 
 \subsection{History of Modern Debugging Tools}
 
