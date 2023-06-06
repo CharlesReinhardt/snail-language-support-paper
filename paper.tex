@@ -2,6 +2,7 @@
 
 \usepackage{cite}
 \usepackage{hyperref}
+\usepackage{listings}
 
 \title{Developing a Visual Studio Code Language Support Extension for the Snail Programming Language}
 \author{Charles Reinhardt}
@@ -27,7 +28,7 @@ Currently, there are no tools to offer advanced langauge support for the snail l
 
 This report presents the Snail Language Support VS Code extension, which seeks to address the lack of programming support tools for the snail programming language. Snail Langauge Support provides several important features to make programming in the snail language easier. First, it features syntax highlighting to make reading snail code easier and help highlight key structures or keywords of the language. Next, it features rudimentary auto completion with auto-closing brackets, braces, and quotes, as well as if-else, while loop, and class definition snippets, reducing the burden of memorizing snail's strict and unintuitive syntax. The extension also has automatic, real-time error checking diagnostics that allow a user to see syntax or parse errors in a snail program before running it for themselves. Finally, the extension is structured to support a full debugger with breakpoints, step-in, step-over, and step-out functionality. 
 
-This paper will outline the process of building the Snail Language Support VS Code extension. Specificaly, we will introduce the structure of a VS Code extension that is meant to add support for new programming langauges. We will also discuss how this extension uses VS Code's language server protocol (LSP) to provide realtime error diagnostics \cite{Microsoft_2022}. We will address how the Snail Language Support extension may be further developed to include debugging support with breakpoints, step in/out behavior, and variable inspection, particularly highlighting the rolw of VS Code's debug adapter protocol DAP \cite{Microsoft_2021}. Finally, we will review good software development practices such as version control and documentation. 
+This paper will outline the process of building the Snail Language Support VS Code extension. Specificaly, we will introduce the structure of a VS Code extension that is meant to add support for new programming langauges. We will also discuss how this extension uses VS Code's language server protocol (LSP) to provide realtime error diagnostics \cite{Microsoft_2022a}. We will address how the Snail Language Support extension may be further developed to include debugging support with breakpoints, step in/out behavior, and variable inspection, particularly highlighting the rolw of VS Code's debug adapter protocol DAP \cite{Microsoft_2021}. Finally, we will review good software development practices such as version control and documentation. 
 
 \section{Background}
 
@@ -35,7 +36,21 @@ This paper will outline the process of building the Snail Language Support VS Co
 
 \subsection{History of Modern Debugging Tools}
 
+Debugging is the process of searching for and fixing unexpected errors in a piece of code \cite{AWS_2023}. Early techniques of debugging software involved physically printing machine output and reading, step-by-step, through code and output, searching for a potential error \cite{RevDeBug_2020}. Some computer systems, such as the IBM 704 Data Processing system released in 2968, allowed programmers to print information stored in specified memory locations in specified forms to assist with debugging activities \cite{MIT_1957, IBMArchives_2023}. 
+
+The \lstinline{adb} and \lstinline{dbx} debuggers for the Unix operating system saw a release in the 1970s and 1980s \cite{BellLaboratories_1983, Linton_1990}. These tols introduced the concept of breakpoints, which help a developer pinpoint the location of a fault in a piece of code. Both \lstinline{adb} and \lstinline{dbx} were run on the command line. Next, came the GNU project debugger (\lstinline{gdb}), another command line debugger, released in 1986, which gave the user even greater control of tracing a program's execution throughout its runtime \cite{GNU_FSF_2023}. With the ability to debug low-level languages like C and Assembly, \lstinline{gdb} is still in use today.
+
+Modern debuggers with graphical user interfaces (GUIs) include the Visual Studio Debugger, which allows a developer to track variable values, function calls, and even change pieces of code or values of expressions while debugging \cite{Microsoft_2022b}. Eclipse, a popular IDE for Java, has a similar debugger with a user friendly GUI \cite{FIXME}. Today, many developement workflows include the use of debugging tools \cite{FIXME}.
+
+Debugging tools can be of great assistance to developers. By allowing developers to more closely and quickly inspect a program's execution, debugging tools can reduce the amount of time a developer spends debugging, and thus enhance developer productivity \cite{FIXME}. 
+
 \subsection{What is Visual Studio Code?}
+
+Visual Studio Code is a popular, open source code editor. Visual Studio Code is designed to be fast and lightweight, with a focus on allowing a developer to write, test, adn debug source code quickly \cite{Microsoft_2023c}. To achieve this, VS Code uses native, web, and language-specific technologoies. Tools like Electron allow VS Code to run on multiple platforms and operating systems using common web technologies like JavaScript, HTML, and CSS \cite{Electron_2023}.
+
+While VS Code is lightweight and fast, it still supports advanced features such as specific language "smarts", build tools, or debugging through the online VS Code extension marketplace \cite{Microsoft_2023b}. VS Code is designed for extensibility, providing robust APIs to allow independent developers to create and publish extensions \cite{Microsoft_2023d}. As a result, VS Code is able to grow and develop along with its community of users. 
+
+Currently popular extensions help make VS Code a popular code editor \cite{StackOverflow_2022}. The CodeSnap extension allows a user to capture and share improved screenshots of code \cite{adpyke_2021}. GitLens adds additional visualization tools to help developers contribute to Git repositories while editing in VS Code \cite{GitKraken_2023}. Language Support for Java(TM) provides intellisense, formatting, refactoring, and build system support for the Java language \cite{RedHat_2023}. 
 
 \section{Anatomy of a Visual Studio Code Extension}
 
