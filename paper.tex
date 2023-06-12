@@ -1,9 +1,50 @@
 \documentclass{article}
 
+\usepackage[title]{appendix}
+\usepackage{bera} % not sure I love this font for this document
 \usepackage{cite}
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{listings}
+\usepackage{wrapfig}
+\usepackage{xcolor}
+
+\colorlet{punct}{red!60!black}
+\definecolor{background}{HTML}{EEEEEE}
+\definecolor{delim}{RGB}{20,105,176}
+\colorlet{numb}{magenta!60!black}
+
+\lstdefinelanguage{json}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+}
+
+\graphicspath{ {./images/} }
 
 \title{Developing a Visual Studio Code Language Support Extension for the Snail Programming Language}
 \author{Charles Reinhardt}
@@ -71,8 +112,16 @@ TODO add signposting
 
 \subsection{Directory Structure}
 
-Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In TODO FIGURE 1, we see a diagram of a general VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before diving into developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} It is important to note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file that allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace. We also have a \lstinline{tsconfig.json} file, which defines our TypeScript code gets transpiled to JavaScript, a topic we will discuss in further detail later in this paper. 
-    
+Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In figure ~\ref{fig:directory-structure}, we see a diagram of a typical language support VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before diving into developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} It is important to note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file that allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace. We also have a \lstinline{tsconfig.json} file, which defines our TypeScript code gets transpiled to JavaScript, a topic we will discuss in further detail later in this paper. 
+
+\begin{wrapfigure}{c}{0.3\textwidth}
+    \begin{center}
+        \includegraphics[height=0.3\textheight]{directory-structure.png}
+        \caption{The typical directory structure of a VSCode language support extension}
+    \end{center}
+    \label{fig:directory-structure}
+\end{wrapfigure}
+
 The \lstinline{src} directory contains the source code that runs our extension. In this directory, the \lstinline{extension.ts} file defines special actions for our extension and launches the extension within an existing VS Code window. The \lstinline{server.ts} file defines a language server that allows our extension to take advantage of realtime error diagnostics. We further discuss language servers later in this paper. 
 
 Lastly, the \lstinline{package.json} file defines which features and configurations our extension supports. It also contains some biographical information about the extension, such as the author, publisher, or name of the exstension. 
@@ -83,7 +132,21 @@ We build Snail Langauge Support with TypeScript. TypeScript is a syntactic super
 
 \subsection{Extension Contributions: The Extension Manifest}
 
+Recall that the \lstinline{package.json} defines what our extension contributes to the user. We now dive into what some of those contributions might be.
+
+First, we can define some metadata about our extension, such as a name, author, description, and version. We can also define which version of the VS Code engine this extension expects. This ensures that an extension knows which VS Code APIs it has proper access to. For example, an extension that expects a VS Code version of \lstinline{1.7.0} won't be able to take advantage of an API released in \lstinline{1.8.0} \cite{Microsoft_2023e}. We can also define some categories that our extension falls under, helping our extension gain visibility on the online VS Code marketplace.
+
+Next, and very importantly, we can define activations events that define when our extension becomes active. When VS Code detects a given activation event, it calls the \lstinline{activate} function found in our \lstinline{extension.ts} file. For example, \lstinline{onLanguage:snail} says that Snail Language Support should be activated when a user is viewing a snail language file. We also define where VS Code looks for the \lstinline{activate} function with our \lstinline{main} attribute. For a more detailed look at Snail Language Support's \lstinline{package.json} file, see Appendix \ref{app:package-json}.
+
 \subsection{Extension Lifecycle: From Startup to Shutdown}
+
+Here, we discuss what happens under the hood when VS Code runs an extension.
+
+When a VS Code client detects an extension's defined activation events, it reads the \lstinline{main} attribute of \lstinline{package.json} to call the \lstinline{activate} function defined in that file. This file (in Snail Language Support's case, the \lstinline{extension.ts} file) has access to the VS Code extension API, which allows us to update the VS Code client UI \cite{Microsoft_2023d}. For example, depending on a user's configuration settings, Snail Language Support can display a VS Code UI style error message window to the user.  
+    
+Also in this file, we register a few command handlers to watch for commands input from a user. These command handlers are examples of the observer design pattern, which allow a developer to handle a variety of input events that are experienced during runtime \cite{GangOfFour_1995}. A developer can register an observer that waits and listens for a particular event, and executes a block of code once that event is detected. One of these command handlers responds to snail file debugging requests. We will touch on the topic of debugging within Snail Language Support more later. 
+
+We also launch our language server, which communicates via VS Code's Language Server Protocol (LSP), inside of our \lstinline{activate} function. We further discuss this topic later.
 
 \subsection{Language Configuration}
 
@@ -120,10 +183,17 @@ We build Snail Langauge Support with TypeScript. TypeScript is a syntactic super
 %== APPENDICES ==%
 \newpage
 
-\section{Appendices}
+\begin{appendices}
 
-\appendix
+\section{Snail Language Support package.json}
 
-\section{Title of Some File}\label{A}
+    The following is the \lstinline{package.json} file from Snail Language Support.
+    \lstinputlisting[language=json]{
+        % this absolute path must be different when building on different machines
+        /Users/charlesreinhardt/Git/snail-language-support/package.json
+    }
+    \label{app:package-json}
+
+\end{appendices}
 
 \end{document}
