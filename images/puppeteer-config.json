@@ -1,0 +1,4 @@
+{
+    "headless": "new",
+    "executablePath": "/opt/homebrew/bin/chromium"
+}

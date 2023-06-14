@@ -10,6 +10,8 @@
 \usepackage{wrapfig}
 \usepackage{xcolor}
 
+\lstset{basicstyle=\bfseries\ttfamily}
+
 \colorlet{punct}{red!60!black}
 \definecolor{background}{HTML}{EEEEEE}
 \definecolor{delim}{RGB}{20,105,176}
@@ -42,6 +44,69 @@
       {\}}{{{\color{delim}{\}}}}}{1}
       {[}{{{\color{delim}{[}}}}{1}
       {]}{{{\color{delim}{]}}}}{1},
+}
+
+\definecolor{lightgray}{rgb}{.9,.9,.9}
+\definecolor{darkgray}{rgb}{.4,.4,.4}
+\definecolor{purple}{rgb}{0.65, 0.12, 0.82}
+\lstdefinelanguage{OldTypeScript}{
+  keywords={abstract, any, as, boolean, break, case, catch, class, console, const, continue, debugger, declare, default, delete, do, else, enum, export, extends, false, finally, for, from, function, get, if, implements, import, in, infer, instanceof, interface, keyof, let, module, namespace, never, new, null, number, object, package, private, protected, public, readonly, require, return, set, static, string, super, switch, symbol, this, throw, true, try, type, typeof, undefined, unique, unknown, var, void, while, with, yield},
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  morestring=[b]',
+  morestring=[b]",
+  ndkeywords={class, export, boolean, throw, implements, import, this},
+  keywordstyle=\color{blue}\bfseries,
+  ndkeywordstyle=\color{darkgray}\bfseries,
+  identifierstyle=\color{black},
+  commentstyle=\color{purple}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  sensitive=true,
+  backgroundcolor=\color{lightgray},
+  extendedchars=true,
+  basicstyle=\ttfamily,
+  showstringspaces=false,
+  showspaces=false,
+  numbers=left,
+  numberstyle=,
+  numbersep=9pt,
+  tabsize=2,
+  breaklines=true,
+  showtabs=false,
+  captionpos=b
+}
+
+\colorlet{comment}{green}
+\lstdefinelanguage{TypeScript}{
+    basicstyle=\normalfont\ttfamily,
+    numbers=left,
+    numberstyle=\scriptsize,
+    stepnumber=1,
+    numbersep=8pt,
+    showstringspaces=false,
+    breaklines=true,
+    frame=lines,
+    backgroundcolor=\color{background},
+    literate=
+     *{0}{{{\color{numb}0}}}{1}
+      {1}{{{\color{numb}1}}}{1}
+      {2}{{{\color{numb}2}}}{1}
+      {3}{{{\color{numb}3}}}{1}
+      {4}{{{\color{numb}4}}}{1}
+      {5}{{{\color{numb}5}}}{1}
+      {6}{{{\color{numb}6}}}{1}
+      {7}{{{\color{numb}7}}}{1}
+      {8}{{{\color{numb}8}}}{1}
+      {9}{{{\color{numb}9}}}{1}
+      {:}{{{\color{punct}{:}}}}{1}
+      {,}{{{\color{punct}{,}}}}{1}
+      {\{}{{{\color{delim}{\{}}}}{1}
+      {\}}{{{\color{delim}{\}}}}}{1}
+      {[}{{{\color{delim}{[}}}}{1}
+      {]}{{{\color{delim}{]}}}}{1},
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    commentstyle=\color{green}\ttfamily
 }
 
 \graphicspath{ {./images/} }
@@ -108,11 +173,13 @@ Existing extensions make VS Code a popular code editor \cite{StackOverflow_2022}
 
 \section{Anatomy of a Visual Studio Code Extension}
 
-TODO add signposting
+In this section, we will discuss the contents of a Visual Studio Code (VS Code) extension. First, we will highlight the directory structure of a typical language support VS Code extension. Next, we will discuss how a VS Code extension runs, from the moment it starts up to the moment it shuts down. We will also overview what can be provided to the user by a VS Code extension, specifically highlighting language configurations, autocompletion, and syntax highlighting. 
 
 \subsection{Directory Structure}
 
-Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In figure ~\ref{fig:directory-structure}, we see a diagram of a typical language support VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before diving into developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} It is important to note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file that allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace. We also have a \lstinline{tsconfig.json} file, which defines our TypeScript code gets transpiled to JavaScript, a topic we will discuss in further detail later in this paper. 
+Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In figure ~\ref{fig:directory-structure}, we see a diagram of a typical language support VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} Note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace and is meant to be a user's first impression of an extension.
+
+Snail Langauge Support is built with TypeScript. TypeScript is a syntactic superset of JavaScript that allows the developer the benefits of a type system without sacrificing JavaScript's flexibility \cite{TypeScript_2023}. TypeScript files are denoted with a \lstinline{.ts} suffix. Using the TypeScript compiler (\lstinline{tsc}), a program in TypeScript is transpiled to an equivalent JavaScript program. With a \lstinline{tsconfig.json} file in an extension directory, we define how the TypeScript compiler handles an extension's TypeScript code. We define where the compiler looks for our \lstinline{.ts} files, where to place resulting JavaScript files, and the strictness of type checks during transpilation.
 
 \begin{wrapfigure}{c}{0.3\textwidth}
     \begin{center}
@@ -122,41 +189,93 @@ Most VS Code extensions share a similar directory structure. These structures ma
     \label{fig:directory-structure}
 \end{wrapfigure}
 
-The \lstinline{src} directory contains the source code that runs our extension. In this directory, the \lstinline{extension.ts} file defines special actions for our extension and launches the extension within an existing VS Code window. The \lstinline{server.ts} file defines a language server that allows our extension to take advantage of realtime error diagnostics. We further discuss language servers later in this paper. 
+The \lstinline{src} directory contains the aforementioned TypeScript source code that runs our extension. In this directory, the \lstinline{extension.ts} file defines special actions for our extension and launches the extension within an existing VS Code window. The \lstinline{server.ts} file defines a language server that allows our extension to take advantage of realtime error diagnostics. We further discuss language servers later in this paper. 
 
 Lastly, the \lstinline{package.json} file defines which features and configurations our extension supports. It also contains some biographical information about the extension, such as the author, publisher, or name of the exstension. 
 
-To build the structure for Snail Language Support, we used the \lstinline{Yeoman} tool to generate an extension skeleton \cite{Yeoman_2023}. This skeleton included configuration and source files for us to modify and build Snail Language Support on. 
-
-We build Snail Langauge Support with TypeScript. TypeScript is a syntactic superset of JavaScript that allows the developer the benefits of a type system without sacrificing JavaScript's flexibility \cite{TypeScript_2023}. Using the TypeScript compiler (\lstinline{tsc}), a program in TypeScript is transpiled to an equivalent JavaScript program. With a \lstinline{tsconfig.json} file, we can define how the TypeScript compiler handles our TypeScript code. We define where the compiler looks for our \lstinline{.ts} files, where to place resulting JavaScript files, and the strictness of type checks during transpilation.
-
-\subsection{Extension Contributions: The Extension Manifest}
-
-Recall that the \lstinline{package.json} defines what our extension contributes to the user. We now dive into what some of those contributions might be.
-
-First, we can define some metadata about our extension, such as a name, author, description, and version. We can also define which version of the VS Code engine this extension expects. This ensures that an extension knows which VS Code APIs it has proper access to. For example, an extension that expects a VS Code version of \lstinline{1.7.0} won't be able to take advantage of an API released in \lstinline{1.8.0} \cite{Microsoft_2023e}. We can also define some categories that our extension falls under, helping our extension gain visibility on the online VS Code marketplace.
-
-Next, and very importantly, we can define activations events that define when our extension becomes active. When VS Code detects a given activation event, it calls the \lstinline{activate} function found in our \lstinline{extension.ts} file. For example, \lstinline{onLanguage:snail} says that Snail Language Support should be activated when a user is viewing a snail language file. We also define where VS Code looks for the \lstinline{activate} function with our \lstinline{main} attribute. For a more detailed look at Snail Language Support's \lstinline{package.json} file, see Appendix \ref{app:package-json}.
+To build the structure for Snail Language Support, we used the \lstinline{Yeoman} tool to generate an extension skeleton \cite{Yeoman_2023}. This skeleton was instrumental in providing basic configuration and source files to modify into the Snail Language Support extension.
 
 \subsection{Extension Lifecycle: From Startup to Shutdown}
 
-Here, we discuss what happens under the hood when VS Code runs an extension.
+When a VS Code window launches, it also launches all extensions the user has downloaded and enabled by calling each extension's \lstinline{activate} function, defined in the extension's source code. In Snail Language Support's case, the \lstinline{activate} function is defined in the \lstinline{extension.ts} file. This file has access to the VS Code extension API, allowing a developer to define certain VS Code client UI updates \cite{Microsoft_2023d}. For example, Snail Language Support can display a VS Code UI style error message to the user if the user does not have a compatibale version of the snail language dowloaded. 
 
-When a VS Code client detects an extension's defined activation events, it reads the \lstinline{main} attribute of \lstinline{package.json} to call the \lstinline{activate} function defined in that file. This file (in Snail Language Support's case, the \lstinline{extension.ts} file) has access to the VS Code extension API, which allows us to update the VS Code client UI \cite{Microsoft_2023d}. For example, depending on a user's configuration settings, Snail Language Support can display a VS Code UI style error message window to the user.  
-    
-Also in this file, we register a few command handlers to watch for commands input from a user. These command handlers are examples of the observer design pattern, which allow a developer to handle a variety of input events that are experienced during runtime \cite{GangOfFour_1995}. A developer can register an observer that waits and listens for a particular event, and executes a block of code once that event is detected. One of these command handlers responds to snail file debugging requests. We will touch on the topic of debugging within Snail Language Support more later. 
+The \lstinline{activate} function is responsible for a few different behaviors. First, the \lstinline{activate} function registers a few command handlers to watch for commands input from a user. A command handler is an example of the observer design pattern, which allows a developer to address a variety of potential input events that are experienced during runtime \cite{GangOfFour_1995}. A developer can register an observer that listens for a particular event and executes a block of code once that event is detected. Snail Language Support defines a few command handlers to detect when a user chooses to run or debug a snail file. We will touch on the topic of debugging within Snail Language Support more later. 
 
-We also launch our language server, which communicates via VS Code's Language Server Protocol (LSP), inside of our \lstinline{activate} function. We further discuss this topic later.
+The \lstinline{activate} function also launches a snail language server, which communicates with VS Code via VS Code's Language Server Protocol (LSP). We further discuss the topic of language servers later in this paper.
 
-\subsection{Language Configuration}
+Once the extension setup inside the \lstinline{activate} function is complete, VS Code enables the extension within the workspace, allowing a developer to utilize the functions of an extension. Once the VS Code window is closed, or the extension is manually disabled, VS Code calls the \lstinline{deactivate} function, which shuts down any separate processes left over from the extension run.
 
-\subsection{Rudimentary Autocompletion Through Snippets}
+To inspect Snail Language Support's \lstinline{extension.ts} file more closely, see Appendix \ref{app:extension-ts}
 
-\subsection{Syntax Highlighting}
+\subsection{Extension Contributions: The Extension Manifest}
+
+Recall that the \lstinline{package.json} defines what our extension contributes to the user. We now discuss some of those contributions here.
+
+First, we can define some metadata about our extension, such as a name, author, description, and version. We can also define which version of the VS Code engine this extension expects. This ensures that an extension knows which VS Code APIs it has proper access to. For example, an extension that expects a VS Code version of \lstinline{1.7.0} won't be able to take advantage of an API released in \lstinline{1.8.0} \cite{Microsoft_2023e}. We can also define some categories that our extension falls under, helping our extension gain visibility on the online VS Code marketplace.
+
+Next, and very importantly, we define where the source code is located for our extension. Through the \lstinline{main} attribute, we define the entry point for our extension. This is the file that contains the \lstinline{activate} function. For Snail Language Support, this is the \lstinline{/out/extension.js} file. Notice that this is the transpiled version of our \lstinline{src/extension.ts} file. For a more detailed look at Snail Language Support's \lstinline{package.json} file, see Appendix \ref{app:package-json}.
+
+\subsubsection{Language Configuration}
+
+Snail Language Support also provides language configuration settings supported by a VS Code extension. These configurations are found in \lstinline{language-configuration.json} file. We can define what is considered a commend through the \lstinline{comments.lineComment} or \lstinline{comments.blockComment} attributes, which allows a user to comment lines using VS Code's comment shortcut. Similarly, we can also define auto-closing structures such as parentheses or brackets through the \lstinline{autoClosingPairs} attribute, which allows VS Code to automatically place closing parentheses or brackets. This is particularly useful for snail, as more opening parentheses or brackets require a closing partner. By defining \lstinline{autoClosingPairs}, a developer can expend less mental energy ensuring that each parenthesis and bracket has a closing pair, and more mental energy on developing code. The \lstinline{language-configuration.json} file for Snail Language Support can be found in Appendix \ref{app:language-configuration}. For more attributes and configuration options, see the VS Code documentation on language configurations \cite{Microsoft_2023f}.
+
+\subsubsection{Rudimentary Autocompletion Through Snippets}
+
+Snail Language Support provides autocompletion suppport for common structures such as if-else clauses, while loops, and class definitions. This autocompletion is implemented through VS Code snippets. A snippet is a commonly used code structure that is defined by a \lstinline{prefix} (or a few options for a \lstinline{prefix}) and a \lstinline{body}. When a user types a snippet \lstinline{prefix}, they are given the option to replace the keyword with the \lstinline{body} of the snippet to complete the structure. Snippet bodies can also contain placeholders, which a user can visit in sequence while pressing their \lstinline{tab} button. For a full listing of the snippets that Snail Language Support provides, see Appendix \ref{app:snippets-json}. Similarly, for more information on snippets in VS Code, see the documentation \cite{Microsoft_2023g}.
+
+\subsubsection{Syntax Highlighting}
+
+Snail Language Support also supports syntax highlighting for the snail language. VS Code's syntax highlighting makes heavy use of TextMate language grammars. A generic language grammar is a set of rules that govern what constitutes a valid statement for a given programming language \cite{pgrandinetti_2019}. A TextMate grammar is a specific format for defining a language grammar \cite{MacroMates_2021a}. TextMate grammars define patterns that match special elements of a text document and assign scope names to these elements. For example, keywords of a particular language might be assigned the \lstinline{keyword.control} scope name. These patterns are defined with regular expressions. 
+
+A regular expression is a string of text that can be used to match a particular pattern in a piece of text. Regular expressions are used in a variety of programming activities, such as lexing a program or to find text in a code editor \cite{ComputerHope_2022, Cornell_2022}. 
+
+TextMate grammars make use of the advanced Oniguruma regular expression syntax, developed by K. Kosako \cite{Microsoft_2023h, MacroMates_2021b}. The Oniguruma regular expression syntax offers advanced features such as case insentivity options, character groupings, quantifiers, and anchors. 
+
+Snail Language Support defines a TextMate grammar in the \lstinline{snail.tmLanguage.json} file, shown in Appendix \ref{app:snail-tmLanguage}. Taking a closer look at the structure of this document, we see three main relevant attributes: \lstinline{$schema}, \lstinline{patterns}, and \lstinline{repository}. 
+
+First, the \lstinline{$schema} attribute links to a TextMate grammar schema document. This allows our editor to verify our \lstinline{snail.tmLanguage.json} file and ensure we are defining valid attributes.
+
+Next, we define a series of \lstinline{patterns} using regular expressions.  VS Code's tokenization engine reads our snail file one line at a time and tries to match the text to a pattern (or combination of patterns) defined in our \lstinline{patterns} attribute. If the engine is successful in matching snail text to a pattern, it assigns that text a scope name. VS Code then uses these scope names to highlight the text appropriately, depending on the chosen color theme. 
+
+The engine tries matching text in the order we define our patterns. This means that the first pattern we define in \lstinline{patterns} is the first regular expression that the tokenization engine tries to match to a line in a snail file. It is important to pay attention to the order that patterns are defined. For example, Snail Language Support defines comments first, which ensures that all snail text, no matter how complicated or syntactically complex, is highlighted as a simple comment.\footnote{While defining our regular expression patterns, we found the Rubular program essesntial. It allowed us to iterate and test regular expressions more rapidly. We strongly recommend investigating this site while developing a TextMate grammar of your own: \url{https://rubular.com/}} 
+
+TextMate grammars also allow you to nest patterns inside of one another. This is essential for snail, as it allows the tokenization engine to match text inside of parentheses or brackets. TextMate grammars' ability to recursively reference the grammar itself (through the \lstinline{$self} keyword) is also essential for this functioanlity. 
+
+For Snail Language Support, we define our patterns in the \lstinline{repository} attribute. This allows us to reference them in multiple places in our \lstinline{patterns} attribute. We feel this makes the document easier to understand and modify when necessary. 
+
+It is important that Snail Language Support's syntax highlighting can handle a snail file with incorrect syntax. For example, if a snail file uses a class definition with the incorrect syntax, Snail Language Support should still be able to highlight the code contained in that class. To achieve this, we must make sure that all patterns are accessible from the top level of the grammar. While any pattern may be nested inside of another pattern, that pattern must be present elsewhere in the grammar so that it is not \emph{only} accessible after matching the other pattern.
 
 \section{Language Servers and the Language Server Protocol (LSP)}
 
-\subsection{Theory}
+Snail Language Support also features automatic lexing and parsing error diagnostics. In order to support this feature, Snail Language Support uses a language server that communicates via VS Code's langauge server protocol (LSP). We now discuss what a language server is, how it relates to the LSP, and how Snail Language Support uses langauge servers. 
+
+\subsection{What is a language server?}
+
+\begin{wrapfigure}{r}{0.3\textwidth}
+    \begin{center}
+        \includegraphics[width=0.3\textwidth]{lsp-basic.png}
+        \caption{A development tool will communicate with a language server to display advanced diagnostics. The language server protocol standardizes this communication.}
+    \end{center}
+    \label{fig:lsp-basic}
+\end{wrapfigure}
+
+A language server is a tool used to provide language-specific editing features such as advanced autocomplete, go-to definition, or automatic error checking \cite{Microsoft_2022a}. Many IDEs today utilize language servers. A development tool will launch a separate language server process to run in the background while a developer writes code. The development tool will then send a \emph{request} to the language server for advanced diagnostics, and the language server will \emph{respond} with the information requested by the development tool. The development tool will then display the diagnostics to the developer. This process is displayed in figure Figure \ref{fig:lsp-basic}.
+
+Many language servers are implemented in the language they assist with. For example, a typical Python language server would be implemented in Python. Fruther, a single language server might have to interact with a number of different development tools. For example, a Python language server might have to interact with VS Code, PyCharm, and Spyder. Without a standard framework for communication between development tools and language servers, development tools and language servers must implement specific functionality for each pairing. This problem is displayed in Figure \ref{fig:no-lsp-theory}. 
+
+\begin{wrapfigure}{l}{0.3\textwidth}
+    \begin{center}
+        \includegraphics[width=0.3\textwidth]{no-lsp-theory.png}
+        \caption{Test}
+    \end{center}
+    \label{fig:no-lsp-theory}
+\end{wrapfigure}
+
+Each development tool has different standards and APIs for how they interact with language servers. To address this, a development tool may need to adjust how they request and recieve diagnostics from a language server. A multi-language tool might need to make these adjustments for every language server it interacts with. Alternatively, a language server might adjust how it recieves and responds to diagnostic requests for each development tool it interacts with. Neither of these options are ideal, and both options result in unnecessary duplicated logic.
+
+\subsection{The Language Server Protocol} 
+
+The Langauge Server Protocol (LSP) defines a standard framework for development tool and language server communication \cite{Microsoft_2022a}. This way, a development tool simple sends and recieves information according to the LSP standard, and is able to communicate with any language-specific language server this way. Similarly, a langauge server will be able to communicate with any development tool by communicating via the LSP standard. 
 
 \subsection{LSP in Snail Language Support}
 
@@ -185,6 +304,17 @@ We also launch our language server, which communicates via VS Code's Language Se
 
 \begin{appendices}
 
+\section{Snail Language Support extension.ts}
+
+    The following is the \lstinline{extension.ts} file from Snail Language Support.
+
+    TODO mesh TypeScript and Json formats to look more uniform
+
+    \lstinputlisting[language=TypeScript]{
+        /Users/charlesreinhardt/Git/snail-language-support/client/src/extension.ts
+    }
+    \label{app:extension-ts}
+
 \section{Snail Language Support package.json}
 
     The following is the \lstinline{package.json} file from Snail Language Support.
@@ -194,6 +324,32 @@ We also launch our language server, which communicates via VS Code's Language Se
     }
     \label{app:package-json}
 
+\newpage
+\section{Snail Language Support language-configuration.json}
+
+    The following is the \lstinline{language-configuration.json} file from Snail Language Support.
+    \lstinputlisting[language=json]{
+        /Users/charlesreinhardt/Git/snail-language-support/configurations/language-configuration.json
+    }
+    \label{app:language-configuration}
+
+\newpage
+\section{Snail Language Support snippets.json}
+
+    The following is the \lstinline{snippets.json} file from Snail Language Support.
+    \lstinputlisting[language=json]{
+        /Users/charlesreinhardt/Git/snail-language-support/snippets/snippets.json
+    }
+    \label{app:snippets-json}
+
+\newpage
+\section{Snail Language Support TextMate Grammar}
+
+    The following is the \lstinline{snail.tmLanguage.json} file from Snail Language Support.
+    \lstinputlisting[language=json]{
+        /Users/charlesreinhardt/Git/snail-language-support/syntaxes/snail.tmLanguage.json
+    }
+    \label{app:snail-tmLanguage}
 \end{appendices}
 
 \end{document}
