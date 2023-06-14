@@ -12,7 +12,10 @@
 \usepackage{wrapfig}
 \usepackage{xcolor}
 
-\lstset{basicstyle=\bfseries\ttfamily}
+\lstset{
+    basicstyle=\bfseries\ttfamily,
+    breaklines=true
+}
 
 \colorlet{punct}{red!60!black}
 \definecolor{background}{HTML}{EEEEEE}
@@ -271,7 +274,9 @@ Each development tool has different standards and APIs for how they interact wit
 
 The Langauge Server Protocol (LSP) defines a standard framework for development tool and language server communication \cite{Microsoft_2022a}. This way, a development tool simple sends and recieves information according to the LSP standard, and is able to communicate with any language-specific language server this way. Similarly, a langauge server will be able to communicate with any development tool by communicating via the LSP standard. 
 
-The LSP devines a number of common interactions between a development tool and a langauge server. For example, a development tool might send the \lstinline{DidchangeTextDocument} notification when a development tool detects that a text document has been edited. A language server might validate this text document and send any notable diagnostics back to the development tool. 
+The LSP defines a number of common interactions between a development tool and a langauge server. For example, a development tool might send the \lstinline{DidchangeTextDocument} notification when a development tool detects that a text document has been edited. A language server might validate this text document and send any notable diagnostics back to the development tool. 
+
+TODO describe the difference between events, requests, and notifications
 
 With an established standard for communication, both development tools and language servers can streamline their communications systems. Additionally, a developer producing one of these tools or features can rely on a consistent standard to make the development process easier. This benefit is also illustrated in Figure \ref{fig:lsp-theory}.
 
@@ -320,6 +325,18 @@ In the Snail Language Support extension, we use a language server to validate sn
     \caption{Demonstrating the benefit of realtime error diagnostics provided in Snail Language Support.}
     \label{fig:dev-diagnostics}
 \end{figure}
+
+To do this, Snail Language Support uses a snail language server. The majority of this language server is implemented in TypeScript in the \lstinline{server.ts} file, which can be found in appendix \ref{app:server-ts}. This file responds to connections from a VS Code client and handles a few important LSP requests such as \lstinline{Initialize} events and \lstinline{DidChangeTextDocument} notifications.
+
+The snail-specific features are provided by modifying the snail interpreter to act as a language server. By passing a \lstinline{-s} or \lstinline{--server} flag while executing a snail file (i.e. \lstinline{snail -s hello-world.sl}), the snail interpreter outputs relevant error diagnostics including program exit status, error source, and error location.\footnote{Further modifying the snail interpreter to handle a variety of potential language server requests (not just requests for error diagnostics) is a great area for future work.} The \lstinline{server.ts} file handles this output and provides it to the VS Code client in the LSP format.
+
+A high-level sequence of interactions between a developer, VS Code, and the snail language server is documented in Figure \ref{fig:lsp-sequence}. First, a user opens a program written in snail (1). When VS Code detects this activity, it launches the snail language server (2). Next, VS Code provides the snail program for the language server to verify (3) and the language server executes the snail program, using the aforementioned \lstinline{snail -s} option (4). The snail language server returns the error diagnostics to VS Code (5), and VS code displays those diagnostics to the developer (6). The developer further modifies the snail file, and VS Code and the snail language server continue to communicate via LSP (7-10). When a developer is finished, they can close the snail file (11), and the VS Code client shuts down the snail language server (12). 
+
+\begin{wrapfigure}{C}{0.3\textwidth}
+    \includegraphics[width=0.3\textwidth]{lsp-sequence.png}
+    \caption{Test A}
+    \label{fig:lsp-sequence}
+\end{wrapfigure}
 
 
 
@@ -395,6 +412,16 @@ In the Snail Language Support extension, we use a language server to validate sn
         /Users/charlesreinhardt/Git/snail-language-support/syntaxes/snail.tmLanguage.json
     }
     \label{app:snail-tmLanguage}
+
+\newpage
+\section{Snail Language Support server.ts}
+
+    The following is the \lstinline{server.ts} file from Snail Language Support.
+    \lstinputlisting[language=TypeScript]{
+        /Users/charlesreinhardt/Git/snail-language-support/client/src/server.ts
+    }
+    \label{app:server-ts}
+
 \end{appendices}
 
 \end{document}

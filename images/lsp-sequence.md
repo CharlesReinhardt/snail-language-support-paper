@@ -11,8 +11,7 @@ sequenceDiagram
     activate L
     V ->> L: Activate snail language server
 
-    L ->> V: Ask for target snail program to verify
-    V ->> L: Provide target snail program
+    V ->> L: Provide target snail program to verify
     L -->> L: Parse target snail program
     L ->> V: Return error diagnostic information
     V ->> U: Display error diagnostics in VS Code UI
@@ -22,7 +21,7 @@ sequenceDiagram
     V ->> L: 
     Note over L, V: Continue to communicate via LSP
     L ->> V: 
-    V ->> U: Display updated snail file
+    V ->> U: Display updated snail program state
     end
 
     U ->> V: Close snail file
