@@ -297,7 +297,31 @@ With an established standard for communication, both development tools and langu
 
 In VS Code extensions, a language server (using LSP) can provide a number of different features for a programming language. By implementing support for the \lstinline{textDocument/hover} request, an exstension could display additional documentation about code when a user hovers their cursor over some text. By implementing support for the \lstinline{widnow/showMessage} request, an extension can display an error message in VS Code's UI when code fails to build. With the \lstinline{textDocument/publishDiagnostics} notification, an extension can validate that a program will run before a user actually tries to run it. For a full list of LSP specificatons, see the documentation \cite{Microsoft_2023i}.
 
-\subsection{LSP in Snail Language Support}
+\subsection{Language Servers in Snail Language Support}
+
+In the Snail Language Support extension, we use a language server to validate snail files before runtime, checking for lexer and parser errors. With the extension enabled, VS Code is able to display lexer and parser errors, and highlight the relevant location of the error, before a developer runs the program themselves. This behavior is illustrated in Figure \ref{fig:dev-diagnostics}. 
+
+\begin{figure}
+    \begin{subfigure}{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{dev-no-diagnostics.png}
+            \subcaption{Developing snail code without realtime error diagnostics can make it difficult to spot syntax errors.}
+            \label{fig:dev-no-diagnostics}
+        \end{center}
+    \end{subfigure}
+    \hspace{0.05\textwidth}
+    \begin{subfigure}{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{dev-with-diagnostics.png}
+            \subcaption{With Snail Language Support, a developer can spot easily spot syntax errors and fix them before runtime.}
+            \label{fig:dev-with-diagnostics}
+        \end{center}
+    \end{subfigure}
+    \caption{Demonstrating the benefit of realtime error diagnostics provided in Snail Language Support.}
+    \label{fig:dev-diagnostics}
+\end{figure}
+
+
 
 \section{Debug Adapter Protocol}
 
@@ -335,6 +359,7 @@ In VS Code extensions, a language server (using LSP) can provide a number of dif
     }
     \label{app:extension-ts}
 
+\newpage
 \section{Snail Language Support package.json}
 
     The following is the \lstinline{package.json} file from Snail Language Support.
