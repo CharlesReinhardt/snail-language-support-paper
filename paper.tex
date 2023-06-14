@@ -3,10 +3,12 @@
 \usepackage[title]{appendix}
 \usepackage{bera} % not sure I love this font for this document
 \usepackage{cite}
+\usepackage{caption}
 \usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
 \usepackage{graphicx}
 \usepackage[colorlinks=true, allcolors=blue]{hyperref}
 \usepackage{listings}
+\usepackage{subcaption}
 \usepackage{wrapfig}
 \usepackage{xcolor}
 
@@ -185,8 +187,8 @@ Snail Langauge Support is built with TypeScript. TypeScript is a syntactic super
     \begin{center}
         \includegraphics[height=0.3\textheight]{directory-structure.png}
         \caption{The typical directory structure of a VSCode language support extension}
+        \label{fig:directory-structure}
     \end{center}
-    \label{fig:directory-structure}
 \end{wrapfigure}
 
 The \lstinline{src} directory contains the aforementioned TypeScript source code that runs our extension. In this directory, the \lstinline{extension.ts} file defines special actions for our extension and launches the extension within an existing VS Code window. The \lstinline{server.ts} file defines a language server that allows our extension to take advantage of realtime error diagnostics. We further discuss language servers later in this paper. 
@@ -253,29 +255,47 @@ Snail Language Support also features automatic lexing and parsing error diagnost
 
 \begin{wrapfigure}{r}{0.3\textwidth}
     \begin{center}
-        \includegraphics[width=0.3\textwidth]{lsp-basic.png}
+        \includegraphics[width=0.3\textwidth]{language-server.png}
         \caption{A development tool will communicate with a language server to display advanced diagnostics. The language server protocol standardizes this communication.}
+        \label{fig:language-server}
     \end{center}
-    \label{fig:lsp-basic}
 \end{wrapfigure}
 
-A language server is a tool used to provide language-specific editing features such as advanced autocomplete, go-to definition, or automatic error checking \cite{Microsoft_2022a}. Many IDEs today utilize language servers. A development tool will launch a separate language server process to run in the background while a developer writes code. The development tool will then send a \emph{request} to the language server for advanced diagnostics, and the language server will \emph{respond} with the information requested by the development tool. The development tool will then display the diagnostics to the developer. This process is displayed in figure Figure \ref{fig:lsp-basic}.
+A language server is a tool used to provide language-specific editing features such as advanced autocomplete, go-to definition, or automatic error checking \cite{Microsoft_2022a}. Many IDEs today utilize language servers. A development tool will launch a separate language server process to run in the background while a developer writes code. The development tool will then send a \emph{request} to the language server for advanced diagnostics, and the language server will \emph{respond} with the information requested by the development tool. The development tool will then display the diagnostics to the developer. This process is displayed in figure Figure \ref{fig:language-server}.
 
 Many language servers are implemented in the language they assist with. For example, a typical Python language server would be implemented in Python. Fruther, a single language server might have to interact with a number of different development tools. For example, a Python language server might have to interact with VS Code, PyCharm, and Spyder. Without a standard framework for communication between development tools and language servers, development tools and language servers must implement specific functionality for each pairing. This problem is displayed in Figure \ref{fig:no-lsp-theory}. 
-
-\begin{wrapfigure}{l}{0.3\textwidth}
-    \begin{center}
-        \includegraphics[width=0.3\textwidth]{no-lsp-theory.png}
-        \caption{Test}
-    \end{center}
-    \label{fig:no-lsp-theory}
-\end{wrapfigure}
 
 Each development tool has different standards and APIs for how they interact with language servers. To address this, a development tool may need to adjust how they request and recieve diagnostics from a language server. A multi-language tool might need to make these adjustments for every language server it interacts with. Alternatively, a language server might adjust how it recieves and responds to diagnostic requests for each development tool it interacts with. Neither of these options are ideal, and both options result in unnecessary duplicated logic.
 
 \subsection{The Language Server Protocol} 
 
 The Langauge Server Protocol (LSP) defines a standard framework for development tool and language server communication \cite{Microsoft_2022a}. This way, a development tool simple sends and recieves information according to the LSP standard, and is able to communicate with any language-specific language server this way. Similarly, a langauge server will be able to communicate with any development tool by communicating via the LSP standard. 
+
+The LSP devines a number of common interactions between a development tool and a langauge server. For example, a development tool might send the \lstinline{DidchangeTextDocument} notification when a development tool detects that a text document has been edited. A language server might validate this text document and send any notable diagnostics back to the development tool. 
+
+With an established standard for communication, both development tools and language servers can streamline their communications systems. Additionally, a developer producing one of these tools or features can rely on a consistent standard to make the development process easier. This benefit is also illustrated in Figure \ref{fig:lsp-theory}.
+
+\begin{figure}
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{no-lsp-theory.png}
+            \caption{Without the Language Server Protocol, development tool and language server communication can get messy.}
+            \label{fig:no-lsp-theory}
+        \end{center}
+    \end{subfigure}
+    \hspace{0.05\textwidth}
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{lsp-theory.png}
+            \caption{The Language Server Protocol streamlines the communication between development tools and language servers.}
+            \label{fig:lsp-theory}
+        \end{center}
+    \end{subfigure}
+    \caption{Demonatrating the benefit of VS Code's Language Server Protocol.}
+    \label{fig:lsp}
+\end{figure}
+
+In VS Code extensions, a language server (using LSP) can provide a number of different features for a programming language. By implementing support for the \lstinline{textDocument/hover} request, an exstension could display additional documentation about code when a user hovers their cursor over some text. By implementing support for the \lstinline{widnow/showMessage} request, an extension can display an error message in VS Code's UI when code fails to build. With the \lstinline{textDocument/publishDiagnostics} notification, an extension can validate that a program will run before a user actually tries to run it. For a full list of LSP specificatons, see the documentation \cite{Microsoft_2023i}.
 
 \subsection{LSP in Snail Language Support}
 
