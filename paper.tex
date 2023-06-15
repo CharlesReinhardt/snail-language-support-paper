@@ -140,7 +140,7 @@ Currently, there are no tools to offer advanced langauge support for the snail l
 
 This report presents the Snail Language Support VS Code extension, which seeks to address the lack of programming support tools for the snail programming language. Snail Langauge Support provides several important features to make programming in the snail language easier. First, it features syntax highlighting to make reading snail code easier and help highlight key structures or keywords of the language. Further, it features rudimentary auto completion with auto-closing brackets, braces, and quotes, as well as if-else, while loop, and class definition snippets, reducing the burden of memorizing snail's strict and unintuitive syntax. The extension also has automatic, real-time error checking diagnostics that allow a user to see syntax or parse errors in a snail program before running it for themselves. Finally, the extension is structured to support a full debugger with breakpoints, step-in, step-over, and step-out functionality. 
 
-This paper will outline the process of building the Snail Language Support VS Code extension. Specificaly, we will introduce the structure of a VS Code extension that is meant to add support for new programming langauges. We will also discuss how this extension uses VS Code's language server protocol (LSP) to provide realtime error diagnostics \cite{Microsoft_2022a}. We will address how the Snail Language Support extension may be further developed to include debugging support with breakpoints, step in/out behavior, and variable inspection, particularly highlighting the rolw of VS Code's debug adapter protocol DAP \cite{Microsoft_2021}. Finally, we will review good software development practices such as version control and documentation. 
+This paper will outline the process of building the Snail Language Support VS Code extension.\footnote{This paper is formatted using \LaTeX. Recognizing that using \LaTeX \hspace{1pt} is really hard, the \LaTeX \hspace{1pt} source code for this paper can be found hosted on GitHub: \url{https://github.com/CharlesReinhardt/snail-language-support-paper/}} Specificaly, we will introduce the structure of a VS Code extension that is meant to add support for new programming langauges. We will also discuss how this extension uses VS Code's language server protocol (LSP) to provide realtime error diagnostics \cite{Microsoft_2022a}. We will address how the Snail Language Support extension may be further developed to include debugging support with breakpoints, step in/out behavior, and variable inspection, particularly highlighting the role of VS Code's debug adapter protocol (DAP) \cite{Microsoft_2021}. Finally, we will review good software development practices such as version control and documentation. 
 
 \section{Background}
 
@@ -186,10 +186,14 @@ Most VS Code extensions share a similar directory structure. These structures ma
 
 Snail Langauge Support is built with TypeScript. TypeScript is a syntactic superset of JavaScript that allows the developer the benefits of a type system without sacrificing JavaScript's flexibility \cite{TypeScript_2023}. TypeScript files are denoted with a \lstinline{.ts} suffix. Using the TypeScript compiler (\lstinline{tsc}), a program in TypeScript is transpiled to an equivalent JavaScript program. With a \lstinline{tsconfig.json} file in an extension directory, we define how the TypeScript compiler handles an extension's TypeScript code. We define where the compiler looks for our \lstinline{.ts} files, where to place resulting JavaScript files, and the strictness of type checks during transpilation.
 
-\begin{wrapfigure}{c}{0.3\textwidth}
+
+\begin{wrapfigure}{R}{0.3\textwidth}
     \begin{center}
         \includegraphics[height=0.3\textheight]{directory-structure.png}
-        \caption{The typical directory structure of a VSCode language support extension}
+        \caption{
+            \centering 
+                The typical directory structure of a VSCode language support extension.
+        }
         \label{fig:directory-structure}
     \end{center}
 \end{wrapfigure}
@@ -210,7 +214,7 @@ The \lstinline{activate} function also launches a snail language server, which c
 
 Once the extension setup inside the \lstinline{activate} function is complete, VS Code enables the extension within the workspace, allowing a developer to utilize the functions of an extension. Once the VS Code window is closed, or the extension is manually disabled, VS Code calls the \lstinline{deactivate} function, which shuts down any separate processes left over from the extension run.
 
-To inspect Snail Language Support's \lstinline{extension.ts} file more closely, see Appendix \ref{app:extension-ts}
+To inspect Snail Language Support's \lstinline{extension.ts} file more closely, see appendix \ref{app:extension-ts}
 
 \subsection{Extension Contributions: The Extension Manifest}
 
@@ -218,25 +222,45 @@ Recall that the \lstinline{package.json} defines what our extension contributes 
 
 First, we can define some metadata about our extension, such as a name, author, description, and version. We can also define which version of the VS Code engine this extension expects. This ensures that an extension knows which VS Code APIs it has proper access to. For example, an extension that expects a VS Code version of \lstinline{1.7.0} won't be able to take advantage of an API released in \lstinline{1.8.0} \cite{Microsoft_2023e}. We can also define some categories that our extension falls under, helping our extension gain visibility on the online VS Code marketplace.
 
-Next, and very importantly, we define where the source code is located for our extension. Through the \lstinline{main} attribute, we define the entry point for our extension. This is the file that contains the \lstinline{activate} function. For Snail Language Support, this is the \lstinline{/out/extension.js} file. Notice that this is the transpiled version of our \lstinline{src/extension.ts} file. For a more detailed look at Snail Language Support's \lstinline{package.json} file, see Appendix \ref{app:package-json}.
+Next, and very importantly, we define where the source code is located for our extension. Through the \lstinline{main} attribute, we define the entry point for our extension. This is the file that contains the \lstinline{activate} function. For Snail Language Support, this is the \lstinline{/out/extension.js} file. Notice that this is the transpiled version of our \lstinline{src/extension.ts} file. For a more detailed look at Snail Language Support's \lstinline{package.json} file, see appendix \ref{app:package-json}.
 
 \subsubsection{Language Configuration}
 
-Snail Language Support also provides language configuration settings supported by a VS Code extension. These configurations are found in \lstinline{language-configuration.json} file. We can define what is considered a commend through the \lstinline{comments.lineComment} or \lstinline{comments.blockComment} attributes, which allows a user to comment lines using VS Code's comment shortcut. Similarly, we can also define auto-closing structures such as parentheses or brackets through the \lstinline{autoClosingPairs} attribute, which allows VS Code to automatically place closing parentheses or brackets. This is particularly useful for snail, as more opening parentheses or brackets require a closing partner. By defining \lstinline{autoClosingPairs}, a developer can expend less mental energy ensuring that each parenthesis and bracket has a closing pair, and more mental energy on developing code. The \lstinline{language-configuration.json} file for Snail Language Support can be found in Appendix \ref{app:language-configuration}. For more attributes and configuration options, see the VS Code documentation on language configurations \cite{Microsoft_2023f}.
+Snail Language Support also provides language configuration settings supported by a VS Code extension. These configurations are found in \lstinline{language-configuration.json} file. We can define what is considered a commend through the \lstinline{comments.lineComment} or \lstinline{comments.blockComment} attributes, which allows a user to comment lines using VS Code's comment shortcut. Similarly, we can also define auto-closing structures such as parentheses or brackets through the \lstinline{autoClosingPairs} attribute, which allows VS Code to automatically place closing parentheses or brackets. This is particularly useful for snail, as more opening parentheses or brackets require a closing partner. By defining \lstinline{autoClosingPairs}, a developer can expend less mental energy ensuring that each parenthesis and bracket has a closing pair, and more mental energy on developing code. The \lstinline{language-configuration.json} file for Snail Language Support can be found in appendix \ref{app:language-configuration}. For more attributes and configuration options, see the VS Code documentation on language configurations \cite{Microsoft_2023f}.
 
 \subsubsection{Rudimentary Autocompletion Through Snippets}
 
-Snail Language Support provides autocompletion suppport for common structures such as if-else clauses, while loops, and class definitions. This autocompletion is implemented through VS Code snippets. A snippet is a commonly used code structure that is defined by a \lstinline{prefix} (or a few options for a \lstinline{prefix}) and a \lstinline{body}. When a user types a snippet \lstinline{prefix}, they are given the option to replace the keyword with the \lstinline{body} of the snippet to complete the structure. Snippet bodies can also contain placeholders, which a user can visit in sequence while pressing their \lstinline{tab} button. For a full listing of the snippets that Snail Language Support provides, see Appendix \ref{app:snippets-json}. Similarly, for more information on snippets in VS Code, see the documentation \cite{Microsoft_2023g}.
+Snail Language Support provides autocompletion suppport for common structures such as if-else clauses, while loops, and class definitions. This autocompletion is implemented through VS Code snippets. A snippet is a commonly used code structure that is defined by a \lstinline{prefix} (or a few options for a \lstinline{prefix}) and a \lstinline{body}. When a user types a snippet \lstinline{prefix}, they are given the option to replace the keyword with the \lstinline{body} of the snippet to complete the structure. Snippet bodies can also contain placeholders, which a user can visit in sequence while pressing their \lstinline{tab} button. For a full listing of the snippets that Snail Language Support provides, see appendix \ref{app:snippets-json}. Similarly, for more information on snippets in VS Code, see the documentation \cite{Microsoft_2023g}.
 
 \subsubsection{Syntax Highlighting}
 
-Snail Language Support also supports syntax highlighting for the snail language. VS Code's syntax highlighting makes heavy use of TextMate language grammars. A generic language grammar is a set of rules that govern what constitutes a valid statement for a given programming language \cite{pgrandinetti_2019}. A TextMate grammar is a specific format for defining a language grammar \cite{MacroMates_2021a}. TextMate grammars define patterns that match special elements of a text document and assign scope names to these elements. For example, keywords of a particular language might be assigned the \lstinline{keyword.control} scope name. These patterns are defined with regular expressions. 
+Snail Language Support also supports syntax highlighting for the snail language as shown in figure \ref{syntax-highlight}. VS Code's syntax highlighting makes heavy use of TextMate language grammars. A generic language grammar is a set of rules that govern what constitutes a valid statement for a given programming language \cite{pgrandinetti_2019}. A TextMate grammar is a specific format for defining a language grammar \cite{MacroMates_2021a}. TextMate grammars define patterns that match special elements of a text document and assign scope names to these elements. For example, keywords of a particular language might be assigned the \lstinline{keyword.control} scope name. These patterns are defined with regular expressions. 
+
+\begin{figure}[b]
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{dev-no-highlight-light.png}
+            \caption{Developing snail code without syntax highlighting can be a mentally taxing experience.}
+            \label{fig:dev-no-highlight}
+        \end{center}
+    \end{subfigure}
+    \hspace{0.05\textwidth}
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{dev-with-highlight-light.png}
+            \caption{Syntax highlighting makes developing snail code much easier.}
+            \label{fig:dev-with-highlight}
+        \end{center}
+    \end{subfigure}
+    \caption{Demonatrating the benefit of Snail Language Support's syntax highlighting feature.}
+    \label{fig:syntax-highlight}
+\end{figure}
 
 A regular expression is a string of text that can be used to match a particular pattern in a piece of text. Regular expressions are used in a variety of programming activities, such as lexing a program or to find text in a code editor \cite{ComputerHope_2022, Cornell_2022}. 
 
 TextMate grammars make use of the advanced Oniguruma regular expression syntax, developed by K. Kosako \cite{Microsoft_2023h, MacroMates_2021b}. The Oniguruma regular expression syntax offers advanced features such as case insentivity options, character groupings, quantifiers, and anchors. 
 
-Snail Language Support defines a TextMate grammar in the \lstinline{snail.tmLanguage.json} file, shown in Appendix \ref{app:snail-tmLanguage}. Taking a closer look at the structure of this document, we see three main relevant attributes: \lstinline{$schema}, \lstinline{patterns}, and \lstinline{repository}. 
+Snail Language Support defines a TextMate grammar in the \lstinline{snail.tmLanguage.json} file, shown in appendix \ref{app:snail-tmLanguage}. Taking a closer look at the structure of this document, we see three main relevant attributes: \lstinline{$schema}, \lstinline{patterns}, and \lstinline{repository}. 
 
 First, the \lstinline{$schema} attribute links to a TextMate grammar schema document. This allows our editor to verify our \lstinline{snail.tmLanguage.json} file and ensure we are defining valid attributes.
 
@@ -252,35 +276,38 @@ It is important that Snail Language Support's syntax highlighting can handle a s
 
 \section{Language Servers and the Language Server Protocol (LSP)}
 
-Snail Language Support also features automatic lexing and parsing error diagnostics. In order to support this feature, Snail Language Support uses a language server that communicates via VS Code's langauge server protocol (LSP). We now discuss what a language server is, how it relates to the LSP, and how Snail Language Support uses langauge servers. 
+Snail Language Support also provides realtime lexing and parsing error diagnostics when developing code in snail. To do this, Snail Language Support uses a language server that communicates via VS Code's langauge server protocol (LSP). We now discuss what a language server is, how it relates to the LSP, and how Snail Language Support uses langauge servers. 
 
-\subsection{What is a language server?}
+\subsection{What is a Language Server?}
 
-\begin{wrapfigure}{r}{0.3\textwidth}
+\begin{wrapfigure}{r}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.3\textwidth]{language-server.png}
-        \caption{A development tool will communicate with a language server to display advanced diagnostics. The language server protocol standardizes this communication.}
+        \includegraphics[width=0.5\textwidth]{language-server.png}
+        \caption{
+            \centering 
+            A development tool will communicate with a language server to display advanced diagnostics.
+        }
         \label{fig:language-server}
     \end{center}
 \end{wrapfigure}
 
-A language server is a tool used to provide language-specific editing features such as advanced autocomplete, go-to definition, or automatic error checking \cite{Microsoft_2022a}. Many IDEs today utilize language servers. A development tool will launch a separate language server process to run in the background while a developer writes code. The development tool will then send a \emph{request} to the language server for advanced diagnostics, and the language server will \emph{respond} with the information requested by the development tool. The development tool will then display the diagnostics to the developer. This process is displayed in figure \ref{fig:language-server}.
+A language server is a tool used to provide language-specific editing features such as advanced autocomplete, go-to definition, or automatic error checking \cite{Microsoft_2022a}. Many IDEs today utilize language servers by launching a language server process that runs in the background while a developer writes code. The development tool then sends a \emph{requests} to the language server for, and the language server \emph{responds} with the information requested by the development tool. The development tool then displays the information to the developer. This process is displayed in figure \ref{fig:language-server}.
 
-Many language servers are implemented in the language they assist with. For example, a typical Python language server would be implemented in Python. Further, a single language server might have to interact with a number of different development tools. For example, a Python language server might have to interact with VS Code, PyCharm, and Spyder. Without a standard framework for communication between development tools and language servers, development tools and language servers must implement specific functionality for each pairing. This problem is displayed in Figure \ref{fig:no-lsp-theory}. 
+Many language servers are implemented in the language they assist with \cite{Microsoft_2023j}. For example, a typical Python language server would be implemented in Python. This makes integrating language servers into development tools difficult, as many development tools are written in languages other than the language they are meant to develop. Further, a single language server might have to interact with a number of different development tools. For example, a Python language server might have to interact with VS Code, PyCharm, and Spyder. Without a standard framework for communication between development tools and language servers, development tools and language servers must implement specific functionality for each pairing. This problem is displayed in figure \ref{fig:no-lsp-theory}. 
 
-Each development tool has different standards and APIs for how they interact with language servers. To address this, a development tool may need to adjust how they request and recieve diagnostics from a language server. A multi-language tool might need to make these adjustments for every language server it interacts with. Alternatively, a language server might adjust how it recieves and responds to diagnostic requests for each development tool it interacts with. Neither of these options are ideal, and both options result in unnecessary duplicated logic.
+Each development tool has different standards for how they interact with language servers. To address this, a development tool may need to adjust how they request and recieve information from each language server it interacts with. Alternatively, a language server might adjust how it recieves and responds to requests for each development tool it interacts with. Both options are not ideal.
 
 \subsection{The Language Server Protocol} 
 
-The Langauge Server Protocol (LSP) defines a standard framework for development tool and language server communication \cite{Microsoft_2022a}. This way, a development tool simply sends and recieves information according to the LSP standard, and is able to communicate with any language-specific language server this way. Similarly, a langauge server will be able to communicate with any development tool by communicating via the LSP standard. 
+The Langauge Server Protocol (LSP) defines a standard framework for development tool and language server communication \cite{Microsoft_2022a}. A development tool is able to communicate with any language-specific language server by sending requests and recieving responses according to the LSP standard. 
 
 The LSP defines a number of common interactions between a development tool and a langauge server. For example, a development tool might send the \lstinline{DidchangeTextDocument} notification when a development tool detects that a text document has been edited. A language server might validate this text document and send any notable diagnostics back to the development tool. 
 
-VS Code's LSP relies on JSON-RPC requests and responses \cite{Microsoft_2023i}. A request is a message that a development tool sends to a language server. This message contains an identifier, method to be executed, and paramaters to be provided to that method. In order to follow the LSP, a language server \textbf{must} send the corresponding response message upon recieving any requests. This response message contains the request identifier, the result of the executed method, and an error object if the request fails. For example, a development tool might send the \lstinline{Initialize} request to a language server, and a language server must respond with the \lstinline{InitializeResponse} before the development tool is allowed to send any further requests. Language servers are also allowed to send requests to development tools, and development tools are still required to respond with the corresponding response.
+VS Code's LSP relies on requests and responses \cite{Microsoft_2023i}. A request is a message that a development tool sends to a language server, asking the language server to perform some operation. A language server responds to the request by sending a corresponding response message with information about the executed operation. In order to follow the LSP, a language server \textbf{must} send a corresponding response upon recieving any requests. For example, a development tool might send the \lstinline{Initialize} request to a language server, and a language server must respond with the \lstinline{InitializeResponse} before the development tool is allowed to send any further requests. This contract goes both ways: when a language server sends a request to a developement tool, the development tool must respond.
 
-VS Code's LSP also contains notifications. A notification is a message that does not require a response. A development tool can send a notification to a language server and the language server can process the notification as it sees fit. Often, the language server will send information back to the development tool (in the form of another notification), but it is important to note that the language server is not required to respond. 
+VS Code's LSP also uses notifications. A notification is a message that does not require a response. A development tool can send a notification to a language server and the language server can process the notification as it sees fit. Often, the language server will send information back to the development tool (in the form of another notification), but it is important to note that the language server is not required to respond. 
 
-With an established standard for communication, both development tools and language servers can streamline their communications systems. Additionally, a developer producing one of these tools or features can rely on a consistent standard to make the development process easier. This benefit is also illustrated in Figure \ref{fig:lsp-theory}.
+With an established standard for communication as shown in \ref{fig:lsp-theory}, both development tools and language servers can streamline their communications systems. Additionally, a developer producing one of these tools or features can rely on a consistent standard to make the development process easier. 
 
 \begin{figure}
     \begin{subfigure}[c][][c]{0.45\textwidth}
@@ -306,39 +333,51 @@ In VS Code extensions, a language server (using LSP) can provide a number of dif
 
 \subsection{Language Servers in Snail Language Support}
 
-In the Snail Language Support extension, we use a language server to validate snail files before runtime, checking for lexer and parser errors. With the extension enabled, VS Code is able to display lexer and parser errors, and highlight the relevant location of the error, before a developer runs the program themselves. This behavior is illustrated in Figure \ref{fig:dev-diagnostics}. 
+In the Snail Language Support extension, we use a language server to validate snail files before runtime, checking for lexer and parser errors. With the extension enabled, VS Code is able to display lexer and parser errors, and highlight the relevant location of the error, before a developer runs the program themselves. This behavior is illustrated in figure \ref{fig:dev-diagnostics}. 
 
 \begin{figure}
     \begin{subfigure}{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-no-diagnostics.png}
-            \subcaption{Developing snail code without realtime error diagnostics can make it difficult to spot syntax errors.}
+            \includegraphics[width=\textwidth]{dev-no-diagnostics-light.png}
+            \subcaption{
+                \centering
+                    Developing snail code without realtime error diagnostics can make it difficult to spot syntax errors.
+                }
             \label{fig:dev-no-diagnostics}
         \end{center}
     \end{subfigure}
     \hspace{0.05\textwidth}
     \begin{subfigure}{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-with-diagnostics.png}
-            \subcaption{With Snail Language Support, a developer can spot easily spot syntax errors and fix them before runtime.}
+            \includegraphics[width=\textwidth]{dev-with-diagnostics-light.png}
+            \subcaption{
+                \centering
+                    With Snail Language Support, a developer can spot easily spot syntax errors and fix them before runtime.
+                }
             \label{fig:dev-with-diagnostics}
         \end{center}
     \end{subfigure}
-    \caption{Demonstrating the benefit of realtime error diagnostics provided in Snail Language Support.}
+    \caption{
+        \centering
+            Demonstrating the benefit of realtime error diagnostics provided in Snail Language Support.
+        }
     \label{fig:dev-diagnostics}
 \end{figure}
 
 To do this, Snail Language Support uses a snail language server. The majority of this language server is implemented in TypeScript in the \lstinline{server.ts} file, which can be found in appendix \ref{app:server-ts}. This file responds to connections from a VS Code client and handles a few important LSP requests such as \lstinline{Initialize} events and \lstinline{DidChangeTextDocument} notifications.
 
-The snail-specific features are provided by modifying the snail interpreter to act as a language server. By passing a \lstinline{-s} or \lstinline{--server} flag while executing a snail file (i.e. \lstinline{snail -s hello-world.sl}), the snail interpreter outputs relevant error diagnostics including program exit status, error source, and error location.\footnote{Further modifying the snail interpreter to handle a variety of potential language server requests (not just requests for error diagnostics) is a great area for future work.} The \lstinline{server.ts} file handles this output and provides it to the VS Code client in the LSP format.
-
-\begin{wrapfigure}{C}{0.3\textwidth}
-    \includegraphics[width=0.3\textwidth]{lsp-sequence.png}
-    \caption{Modelling the interactions between a developer, a VS Code client, and snail language server while a developer opens and modifies a snail file.}
+\begin{wrapfigure}{R}{0.5\textwidth}
+    \includegraphics[width=0.5\textwidth]{lsp-sequence.png}
+    \caption{
+        \centering
+            Modelling the interactions between a developer, a VS Code client, and snail language server while a developer opens and modifies a snail file.
+    }
     \label{fig:lsp-sequence}
 \end{wrapfigure}
 
-A high-level sequence of interactions between a developer, VS Code, and the snail language server is documented in Figure \ref{fig:lsp-sequence}. First, a user opens a program written in snail (1). When VS Code detects this activity, it launches the snail language server (2). Next, VS Code provides the snail program for the language server to verify (3) and the language server executes the snail program, using the aforementioned \lstinline{snail -s} option (4). The snail language server returns the error diagnostics to VS Code (5), and VS code displays those diagnostics to the developer (6). The developer further modifies the snail file, and VS Code and the snail language server continue to communicate via LSP (7-10). When a developer is finished, they can close the snail file (11), and the VS Code client shuts down the snail language server (12). 
+The snail-specific features are provided by modifying the snail interpreter to act as a language server. By passing a \lstinline{-s} or \lstinline{--server} flag while executing a snail file (i.e. \lstinline{snail -s hello-world.sl}), the snail interpreter outputs relevant error diagnostics including program exit status, error source, and error location.\footnote{Further modifying the snail interpreter to handle a variety of potential language server requests (not just requests for error diagnostics) is a great area for future work.} The \lstinline{server.ts} file handles this output and provides it to the VS Code client in the LSP format.
+
+A high-level sequence of interactions between a developer, VS Code client, and snail language server is documented in figure \ref{fig:lsp-sequence}. First, a user opens a program written in snail (1). When the VS Code client detects this activity, it launches a snail language server (2). Next, the VS Code client provides the snail program to verify (3) and the language server executes the snail program, using the aforementioned \lstinline{snail -s} option (4). The snail language server returns the error diagnostics to the VS Code client (5) and the client displays these diagnostics to the developer (6). While the developer further modifies the snail file, the VS Code client and snail language server continue to communicate via LSP (7-10). When a developer is finished, they can close the snail file (11) and the VS Code client shuts down the snail language server (12). 
 
 
 \section{Debug Adapter Protocol}
