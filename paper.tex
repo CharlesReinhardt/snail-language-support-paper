@@ -130,7 +130,7 @@
 
 \section{Introduction}
 
-Much of software development in the present day takes place in integrated development environments (IDEs) \cite{JetBrains_2019}. An IDE is a collection of software development tools, such as a code editor, debugger, and build system, often unified under a similar user interface, with te goal of simplifying the software development process and enhancing developer productivity \cite{Gillis_Silverthorne_2018,Shyniaieva_2023}. In addition to composing these tools together, many IDEs also offer advanced features within their code editors such as syntax highlighting, code auto-completion, and error-checking diagnostics. Today, there are any number of different IDEs available for use with any given programming language, many offered as freely-downloadable for public use. For example, a developer looking to write code in Java may choose to do so in Eclipse, IntelliJ IDEA, or BlueJ \cite{EclipseFoundation_2023, JetBrains_2023,KingsProgrammingEducationToolsGroup_2022}. With so many high quality IDEs available today, it is no surprise that 75\% of software developers today use an IDE in their everyday work \cite{JetBrains_2019}. Clearly, the IDE has become an integral part of the software development process today \cite{Vaniukov_2023}. 
+Much of software development in the present day takes place in integrated development environments (IDEs) \cite{JetBrains_2019}. An IDE is a collection of software development tools, such as a code editor, debugger, and build system, often unified under a similar user interface, with the goal of simplifying the software development process and enhancing developer productivity \cite{Gillis_Silverthorne_2018,Shyniaieva_2023}. In addition to composing these tools together, many IDEs also offer advanced features within their code editors such as syntax highlighting, code auto-completion, and error-checking diagnostics. Today, there are any number of different IDEs available for use with any given programming language, many offered as freely-downloadable for public use. For example, a developer looking to write code in Java may choose to do so in Eclipse, IntelliJ IDEA, or BlueJ \cite{EclipseFoundation_2023, JetBrains_2023,KingsProgrammingEducationToolsGroup_2022}. With so many high quality IDEs available today, it is no surprise that 75\% of software developers today use an IDE in their everyday work \cite{JetBrains_2019}. Clearly, the IDE has become an integral part of the software development process today \cite{Vaniukov_2023}. 
 
 Visual Studio Code (VS Code), is a popular, open source text editor maintained by Microsoft \cite{StackOverflow_2022,Microsoft_2023a}. When first downloaded, VS Code is a lightweight text editor with minimal features. However, a number of community-built, freely downloadable extensions offer advanced langauge features. These extensions can be dowloaded on VS Code's online extension marketplace, and can turn VS Code into a very fast ,robust, and powerful development environment for any programming task or language \cite{Microsoft_2023b}. 
 
@@ -182,7 +182,7 @@ In this section, we will discuss the contents of a Visual Studio Code (VS Code) 
 
 \subsection{Directory Structure}
 
-Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In figure ~\ref{fig:directory-structure}, we see a diagram of a typical language support VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} Note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace and is meant to be a user's first impression of an extension.
+Most VS Code extensions share a similar directory structure. These structures may vary depending on what purpose the extension is meant to serve. In figure \ref{fig:directory-structure}, we see a diagram of a typical language support VS Code extension. First, the \lstinline{.vscode} directory configures how we run and test our exstension locally. Through the \lstinline{launch.json} and \lstinline{tasks.json} files, we define various tasks and configurations to streamline the build and testing process.\footnote{From personal experience, we strongly recommend taking the time to understand these files before developing a VS Code extension. It will likely save painstaking debugging in the near future. See launch configurations: \url{https://code.visualstudio.com/docs/editor/debugging\#_launch-configurations} and tasks: \url{https://code.visualstudio.com/docs/editor/tasks}} Note that these configuration files do not get packaged with a released VS Code extension. Next, a \lstinline{README.md} file allows us to advertise the features of our extension. This file is rendered in the VS Code extension marketplace and is meant to be a user's first impression of an extension.
 
 Snail Langauge Support is built with TypeScript. TypeScript is a syntactic superset of JavaScript that allows the developer the benefits of a type system without sacrificing JavaScript's flexibility \cite{TypeScript_2023}. TypeScript files are denoted with a \lstinline{.ts} suffix. Using the TypeScript compiler (\lstinline{tsc}), a program in TypeScript is transpiled to an equivalent JavaScript program. With a \lstinline{tsconfig.json} file in an extension directory, we define how the TypeScript compiler handles an extension's TypeScript code. We define where the compiler looks for our \lstinline{.ts} files, where to place resulting JavaScript files, and the strictness of type checks during transpilation.
 
@@ -234,7 +234,7 @@ Snail Language Support provides autocompletion suppport for common structures su
 
 \subsubsection{Syntax Highlighting}
 
-Snail Language Support also supports syntax highlighting for the snail language as shown in figure \ref{syntax-highlight}. VS Code's syntax highlighting makes heavy use of TextMate language grammars. A generic language grammar is a set of rules that govern what constitutes a valid statement for a given programming language \cite{pgrandinetti_2019}. A TextMate grammar is a specific format for defining a language grammar \cite{MacroMates_2021a}. TextMate grammars define patterns that match special elements of a text document and assign scope names to these elements. For example, keywords of a particular language might be assigned the \lstinline{keyword.control} scope name. These patterns are defined with regular expressions. 
+Snail Language Support also supports syntax highlighting for the snail language as shown in figure \ref{fig:syntax-highlight}. VS Code's syntax highlighting makes heavy use of TextMate language grammars. A generic language grammar is a set of rules that govern what constitutes a valid statement for a given programming language \cite{pgrandinetti_2019}. A TextMate grammar is a specific format for defining a language grammar \cite{MacroMates_2021a}. TextMate grammars define patterns that match special elements of a text document and assign scope names to these elements. For example, keywords of a particular language might be assigned the \lstinline{keyword.control} scope name. These patterns are defined with regular expressions. 
 
 \begin{figure}[b]
     \begin{subfigure}[c][][c]{0.45\textwidth}
@@ -335,7 +335,7 @@ In VS Code extensions, a language server (using LSP) can provide a number of dif
 
 In the Snail Language Support extension, we use a language server to validate snail files before runtime, checking for lexer and parser errors. With the extension enabled, VS Code is able to display lexer and parser errors, and highlight the relevant location of the error, before a developer runs the program themselves. This behavior is illustrated in figure \ref{fig:dev-diagnostics}. 
 
-\begin{figure}
+\begin{figure}[t]
     \begin{subfigure}{0.45\textwidth}
         \begin{center}
             \includegraphics[width=\textwidth]{dev-no-diagnostics-light.png}
@@ -364,8 +364,6 @@ In the Snail Language Support extension, we use a language server to validate sn
     \label{fig:dev-diagnostics}
 \end{figure}
 
-To do this, Snail Language Support uses a snail language server. The majority of this language server is implemented in TypeScript in the \lstinline{server.ts} file, which can be found in appendix \ref{app:server-ts}. This file responds to connections from a VS Code client and handles a few important LSP requests such as \lstinline{Initialize} events and \lstinline{DidChangeTextDocument} notifications.
-
 \begin{wrapfigure}{R}{0.5\textwidth}
     \includegraphics[width=0.5\textwidth]{lsp-sequence.png}
     \caption{
@@ -374,6 +372,8 @@ To do this, Snail Language Support uses a snail language server. The majority of
     }
     \label{fig:lsp-sequence}
 \end{wrapfigure}
+
+To do this, Snail Language Support uses a snail language server. The majority of this language server is implemented in TypeScript in the \lstinline{server.ts} file, which can be found in appendix \ref{app:server-ts}. This file responds to connections from a VS Code client and handles a few important LSP requests such as \lstinline{Initialize} events and \lstinline{DidChangeTextDocument} notifications.
 
 The snail-specific features are provided by modifying the snail interpreter to act as a language server. By passing a \lstinline{-s} or \lstinline{--server} flag while executing a snail file (i.e. \lstinline{snail -s hello-world.sl}), the snail interpreter outputs relevant error diagnostics including program exit status, error source, and error location.\footnote{Further modifying the snail interpreter to handle a variety of potential language server requests (not just requests for error diagnostics) is a great area for future work.} The \lstinline{server.ts} file handles this output and provides it to the VS Code client in the LSP format.
 
