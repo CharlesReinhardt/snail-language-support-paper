@@ -392,11 +392,7 @@ Instead of asking a development tool to interface directly with a debugger, supp
 
 VS Code's Debug Adapter Protocol (DAP) standardizes the communication between a development tool and debug adapter. As shown in figure \ref{fig:dap-theory}, this allows language-specific debuggers and debug adapters to be reused for multiple development tools.
 
-VS Code's DAP relies on requests and responses very similarly to the LSP \cite{Microsoft_2021b}. A request is a message that a development tool sends to a debug adapter, asking the debugger to perform some debugging task. The debug adapter communicates with the language-specific debugger to perform this operation and sends a corresponding response message to the development tool. The debug adapter \textbf{must} send a corresponding response after recieving a request, even if the response is an empty message. The DAP also defines reverse requests, which function the same as regular requests except that they are sent from the debug adapter to the development tool.
-
-VS Code's DAP also allows a debug adapter to send the development tool events. This allows the debug adapter to update the development tool on a debugging session's state. For example, a debug adapter can send the development tool a \lstinline{Stopped} event when program execution has stopped due to a breakpoint, step request completion, or expression evaluation completion. 
-    
-\begin{figure}[b]
+\begin{figure}[h]
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \includegraphics[width=\textwidth]{no-dap-theory.png}
         \caption{Communication between a generic debugger and a development tool is incredibly complicated.}
@@ -412,7 +408,25 @@ VS Code's DAP also allows a debug adapter to send the development tool events. T
     \label{fig:dap}
 \end{figure}
 
+VS Code's DAP relies on requests and responses very similarly to the LSP \cite{Microsoft_2021b}. A request is a message that a development tool sends to a debug adapter, asking the debugger to perform some debugging task. The debug adapter communicates with the language-specific debugger to perform this operation and sends a corresponding response message to the development tool. The debug adapter \textbf{must} send a corresponding response after recieving a request, even if the response is an empty message. The DAP also defines reverse requests, which function the same as regular requests except that they are sent from the debug adapter to the development tool.
+
+VS Code's DAP also allows a debug adapter to send the development tool events. This allows the debug adapter to update the development tool on a debugging session's state. For example, a debug adapter can send the development tool a \lstinline{Stopped} event when program execution has stopped due to a breakpoint, step request completion, or expression evaluation completion. 
+
 \subsection{Debug Adapter Protocol in Snail Language Support}
+
+Snail Language Support does not currently provide a debugger for the snail language. However, the extension is structured to support a snail debugger in the future. 
+
+\begin{itemize}
+    \item defining a debug adapter for the extension
+    \item defining a debug adapter inside of snail
+    \begin{itemize}
+        \item reasonML
+        \item ocaml-dap
+        \item lwt
+    \end{itemize}
+    \item initialization process of that debug adapter (incl. diagram)
+    \item appendix of commands to implement in the future (incl. diagram)
+\end{itemize}
 
 \section{Good Practices in Software Development}
 
