@@ -386,7 +386,7 @@ Snail Language Support is also structured to support the implementation of a deb
 
 \subsection{What is the Debug Adapter Protocol?}
 
-Debugging tools are an integral part of the software development process. Modern debuggers are often implemented with a user-friendly UI to help developers debug their programs \cite{Microsoft_2022b,Matloff_Salzman_2008,Sinha_2017}. Many of these debuggers are built intertwined with their corresponding code editor's UI, which can vary from code editor to code editor. As a result, valuable debugging-logic is intermingled with code-editor-specific UI logic. This makes it nearly impossible to implement a debugger that is capable of communicating with different code editors \cite{Microsoft_2021a}. This problem is illustrated in figure \ref{fig:no-dap-theory}.
+Debugging tools are an integral part of the software development process. Modern debuggers are often implemented with a user-friendly UI to help developers debug their programs \cite{Microsoft_2022b,Matloff_Salzman_2008,Sinha_2017}. Many of these debuggers are built intertwined with their corresponding code editor's UI, which can vary from code editor to code editor. As a result, valuable debugging logic is intermingled with code-editor-specific UI logic. This makes it nearly impossible to implement a debugger that is capable of communicating with different code editors \cite{Microsoft_2021a}. This problem is illustrated in figure \ref{fig:no-dap-theory}.
 
 Instead of asking a development tool to interface directly with a debugger, suppose a development tool interfaces with a debug adapter that translates a development tool's requests and sends them to a language-specific (but tool-agnostic) debugger. If the communication between the development tool and debug adapter is standardized, a language-specific debug adapter can be reused across multiple development tools. 
 
@@ -395,38 +395,64 @@ VS Code's Debug Adapter Protocol (DAP) standardizes the communication between a 
 \begin{figure}[h]
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \includegraphics[width=\textwidth]{no-dap-theory.png}
-        \caption{Communication between a generic debugger and a development tool is incredibly complicated.}
+        \caption{
+            \centering
+                Communication between a generic debugger and a development tool is incredibly complicated.
+        }
         \label{fig:no-dap-theory}
     \end{subfigure}
     \hspace{0.05\textwidth}
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \includegraphics[width=\textwidth]{dap-theory.png}
-        \caption{With the Debug Adapter Protocol, a development tool can easily communicate with a generic langauge-specific debugger.}
+        \caption{
+            \centering
+                With the Debug Adapter Protocol, a development tool can easily communicate with a generic langauge-specific debugger.
+        }
         \label{fig:dap-theory}
     \end{subfigure}
-    \caption{Illustrating the benefit of the Debug Adapter Protocol in aiding development tool and debugger communication.}
+    \caption{
+        \centering
+            Illustrating the benefit of the Debug Adapter Protocol in aiding development tool and debugger communication.
+    }
     \label{fig:dap}
 \end{figure}
 
 VS Code's DAP relies on requests and responses very similarly to the LSP \cite{Microsoft_2021b}. A request is a message that a development tool sends to a debug adapter, asking the debugger to perform some debugging task. The debug adapter communicates with the language-specific debugger to perform this operation and sends a corresponding response message to the development tool. The debug adapter \textbf{must} send a corresponding response after recieving a request, even if the response is an empty message. The DAP also defines reverse requests, which function the same as regular requests except that they are sent from the debug adapter to the development tool.
 
-VS Code's DAP also allows a debug adapter to send the development tool events. This allows the debug adapter to update the development tool on a debugging session's state. For example, a debug adapter can send the development tool a \lstinline{Stopped} event when program execution has stopped due to a breakpoint, step request completion, or expression evaluation completion. 
+VS Code's DAP also allows a debug adapter to send events to the development tool. This allows the debug adapter to update the development tool on a debugging session's state. For example, a debug adapter can send the development tool a \lstinline{Stopped} event when program execution has stopped due to a breakpoint, step request completion, or expression evaluation completion. 
 
 \subsection{Debug Adapter Protocol in Snail Language Support}
 
 Snail Language Support does not currently provide a debugger for the snail language. However, the extension is structured to support a snail debugger in the future. 
 
-\begin{itemize}
-    \item defining a debug adapter for the extension
-    \item defining a debug adapter inside of snail
-    \begin{itemize}
-        \item reasonML
-        \item ocaml-dap
-        \item lwt
-    \end{itemize}
-    \item initialization process of that debug adapter (incl. diagram)
-    \item appendix of commands to implement in the future (incl. diagram)
-\end{itemize}
+Snail Language Support provides a debug adapter for the snail language in two parts, as shown in figure \ref{fig:dap-high-level}. First, an extension-level debug adapter is defined within Snail Language Support in the \lstinline{debugAdapter.ts} file, as found in appendix \ref{app:debug-adapter-ts}. This debug adapter is launched using the \lstinline{node.js} runtime within the VS Code client. The VS Code client sends DAP requests to the extension-level debug adapter via standard input (\lstinline{stdin}), and the debug adapter uses the transmission control protocol (TCP) to forward these DAP requests along to snail. Think of the extension-level debug adapter as a tool to echo DAP requests from VS Code along to snail. 
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \begin{center}
+        \includegraphics[width=0.5\textwidth]{dap-high-level.png}
+        \caption{
+            \centering 
+            A high-level overview of VS Code, Snail Language Support, and snail debugging communication
+        }
+        \label{fig:dap-high-level}
+    \end{center}
+\end{wrapfigure}
+
+Next, the DAP requests are processed in a snail-level debug adapter that is defined as an additional module alongside the snail interpreter. This snail-level debug adapter is defined in \lstinline{snaildap.re} as shown in appendix \ref{app:snaildap} and is responsible for responding to DAP requests with the necessary snail-specific information. 
+
+\subsubsection{The \lstinline{snaildap} Snail Debug Adapter}
+
+The \lstinline{snaildap} module is written using the Reason programming language. Reason is built on top of the strictly-typed functional OCaml programming language \cite{Reason_2020}. Reason introduces a JavaScript-like syntax on top of OCaml's type system, giving developers a familiar syntax while still providing improved code safety and maintanability. Anything written in Reason can be translated to OCaml (and vice versa), allowing developers to take advantage of OCaml tools when developing in Reason.
+
+The \lstinline{snaildap.re} debug adapter makes use of the \lstinline{ocaml-dap} library developed by Hackwaly \cite{Hackwaly_2021}. The \lstinline{ocaml-dap} library is an implementation for VS Code's DAP in the OCaml langauge, allowing a developer to reference relevant types, requests, and commands when handling DAP requests in OCaml. While using the \lstinline{ocaml-dap} library in Reason proves to be convenient, it does introduce one problem. After performing debug initialization, \lstinline{ocaml-dap} requires a program to, essentially, sit and wait for DAP requests to be recieved. This prevents \lstinline{snaildap} from actually running snail and aqcuiring program details to respond to DAP requests once they are recieved. 
+
+The \lstinline{snaildap} debug adapter can solve this problem by making use of the Lightweight Thread (\lstinline{Lwt}) library for OCaml and Reason. The \lstinline{Lwt} library introduces the concept of a promise, a placeholder return object for time-consuming operations \cite{Ocsigen_2023}. When a developer wants a program to continue running while waiting for operation to finish, they can introduce a promise that contains an empty value. Once the time-consuming operation is finished, the promise becomes fulfilled and gains a meaningful value. During that time spent waiting for a promise to be fulfilled, a program is able to perform other operations. In the context of \lstinline{snaildap}, the \lstinline{Lwt} module allows \lstinline{snaildap} to perform snail interpreter operations \emph{and} wait for DAP requests \emph{simultaneously}.
+
+Taking a look at the \lstinline{snaildap.re} file as shown in appendix \ref{app:snaildap}, the important initialization of our debug adapter can be found in three functions: the \lstinline{uninitialized}, \lstinline{initialized}, and \lstinline{debug} functions. 
+
+In the \lstinline{unitialized} and \lstinline{initialized} functions, \lstinline{snaildap} handles \lstinline{Initialize} and \lstinline{Launch} requests. If \lstinline{snaildap} were to also support the \lstinline{Attach} request, that behavior would be implemented here. The \lstinline{snaildap} module also handles \lstinline{Disconnect} requests when necessary. 
+
+Finally, in the \lstinline{debug} function, we define behavior for the DAP capabilities that our debug adapter supports. Currently, Snail Language Support handles \lstinline{ConfigurationDone}, \lstinline{Threads}, \lstinline{Terminate}, and \lstinline{Disconnect} requests. This is enough for Snail Language Support to start and stop a debugging session via the VS Code UI, but not enough for a user to do any debugging to a snail program. Further work to include real debugging logic would be to implement behavior for a variety of DAP requests as shown in appendix \ref{app:further-dap}. 
 
 \section{Good Practices in Software Development}
 
@@ -503,6 +529,60 @@ Snail Language Support does not currently provide a debugger for the snail langu
         /Users/charlesreinhardt/Git/snail-language-support/client/src/server.ts
     }
     \label{app:server-ts}
+
+\newpage
+\section{Snail Language Support debugAdapter.ts}
+
+    The following is the \lstinline{debugAdapter.ts} file from Snail Language Support.
+    \lstinputlisting[language=TypeScript]{
+        /Users/charlesreinhardt/Git/snail-language-support/client/src/debugAdapter.ts
+    }
+    \label{app:debug-adapter-ts}
+
+\newpage
+\section{Snail Language snaildap.re}
+
+    The following is the \lstinline{snaildap.re} file from the snail language interpreter.
+    \lstinputlisting[]{
+        /Users/charlesreinhardt/Git/snail/src/snaildap.re
+    }
+    \label{app:snaildap}
+    
+\newpage
+\section{Future snaildap Debug Adapter Protocol Requests} 
+
+    The \lstinline{snaildap} debug adapter module allows a VS Code client to start and stop a snail debugging session through the VS Code UI. In order to perform debugging-specific actions such as step in/out behavior and variable inspection, a number of DAP requests must be processed and responded to in the \lstinline{snaildap} module. Those requests are listed here, organized by the functionality they are meant to support. They are described in more detail on the Debug Adapter Protocol documentation: \url{https://microsoft.github.io/debug-adapter-protocol/specification}
+
+    \begin{enumerate}
+        \item Breakpoints
+            \begin{itemize}
+                \item BreakpointLocations Request
+                \item SetBreakpoints Request
+            \end{itemize}
+        \item Program execution start/stopping
+            \begin{itemize}
+                \item Pause Request
+                \item Continue Request
+            \end{itemize}
+        \item Step through
+            \begin{itemize}
+                \item Next Request
+                \item StepInTargets Request
+                \item StepIn Request
+                \item StepOut Request
+            \end{itemize}
+        \item Call stack display
+            \begin{itemize}
+                \item StackTrace Request
+            \end{itemize}
+        \item Variable/expression inspection
+            \begin{itemize}
+                \item Scopes Request
+                \item Variables Request
+                \item Evaluate Request
+            \end{itemize}
+    \end{enumerate}
+    \label{app:further-dap}
 
 \end{appendices}
 
