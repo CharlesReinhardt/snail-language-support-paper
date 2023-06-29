@@ -189,7 +189,7 @@ Snail Langauge Support is built with TypeScript. TypeScript is a syntactic super
 
 \begin{wrapfigure}{R}{0.3\textwidth}
     \begin{center}
-        \includegraphics[height=0.3\textheight]{directory-structure.png}
+        \includegraphics[height=0.3\textheight]{png/directory-structure.png}
         \caption{
             \centering 
                 The typical directory structure of a VSCode language support extension.
@@ -239,7 +239,7 @@ Snail Language Support also supports syntax highlighting for the snail language 
 \begin{figure}[b]
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-no-highlight-light.png}
+            \includegraphics[width=\textwidth]{screenshots/dev-no-highlight-light.png}
             \caption{Developing snail code without syntax highlighting can be a mentally taxing experience.}
             \label{fig:dev-no-highlight}
         \end{center}
@@ -247,7 +247,7 @@ Snail Language Support also supports syntax highlighting for the snail language 
     \hspace{0.05\textwidth}
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-with-highlight-light.png}
+            \includegraphics[width=\textwidth]{screenshots/dev-with-highlight-light.png}
             \caption{Syntax highlighting makes developing snail code much easier.}
             \label{fig:dev-with-highlight}
         \end{center}
@@ -282,7 +282,7 @@ Snail Language Support also provides realtime lexing and parsing error diagnosti
 
 \begin{wrapfigure}{r}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.5\textwidth]{language-server.png}
+        \includegraphics[width=0.5\textwidth]{png/language-server.png}
         \caption{
             \centering 
             A development tool will communicate with a language server to display advanced diagnostics.
@@ -312,7 +312,7 @@ With an established standard for communication as shown in \ref{fig:lsp-theory},
 \begin{figure}
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{no-lsp-theory.png}
+            \includegraphics[width=\textwidth]{png/no-lsp-theory.png}
             \caption{Without the Language Server Protocol, development tool and language server communication can get messy.}
             \label{fig:no-lsp-theory}
         \end{center}
@@ -320,7 +320,7 @@ With an established standard for communication as shown in \ref{fig:lsp-theory},
     \hspace{0.05\textwidth}
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{lsp-theory.png}
+            \includegraphics[width=\textwidth]{png/lsp-theory.png}
             \caption{The Language Server Protocol streamlines the communication between development tools and language servers.}
             \label{fig:lsp-theory}
         \end{center}
@@ -338,7 +338,7 @@ In the Snail Language Support extension, we use a language server to validate sn
 \begin{figure}[t]
     \begin{subfigure}{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-no-diagnostics-light.png}
+            \includegraphics[width=\textwidth]{screenshots/dev-no-diagnostics-light.png}
             \subcaption{
                 \centering
                     Developing snail code without realtime error diagnostics can make it difficult to spot syntax errors.
@@ -349,7 +349,7 @@ In the Snail Language Support extension, we use a language server to validate sn
     \hspace{0.05\textwidth}
     \begin{subfigure}{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{dev-with-diagnostics-light.png}
+            \includegraphics[width=\textwidth]{screenshots/dev-with-diagnostics-light.png}
             \subcaption{
                 \centering
                     With Snail Language Support, a developer can spot easily spot syntax errors and fix them before runtime.
@@ -365,7 +365,7 @@ In the Snail Language Support extension, we use a language server to validate sn
 \end{figure}
 
 \begin{wrapfigure}{R}{0.5\textwidth}
-    \includegraphics[width=0.5\textwidth]{lsp-sequence.png}
+    \includegraphics[width=0.5\textwidth]{png/lsp-sequence.png}
     \caption{
         \centering
             Modelling the interactions between a developer, a VS Code client, and snail language server while a developer opens and modifies a snail file.
@@ -394,7 +394,7 @@ VS Code's Debug Adapter Protocol (DAP) standardizes the communication between a 
 
 \begin{figure}[h]
     \begin{subfigure}[c][][c]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{no-dap-theory.png}
+        \includegraphics[width=\textwidth]{png/no-dap-theory.png}
         \caption{
             \centering
                 Communication between a generic debugger and a development tool is incredibly complicated.
@@ -403,7 +403,7 @@ VS Code's Debug Adapter Protocol (DAP) standardizes the communication between a 
     \end{subfigure}
     \hspace{0.05\textwidth}
     \begin{subfigure}[c][][c]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{dap-theory.png}
+        \includegraphics[width=\textwidth]{png/dap-theory.png}
         \caption{
             \centering
                 With the Debug Adapter Protocol, a development tool can easily communicate with a generic langauge-specific debugger.
@@ -429,7 +429,7 @@ Snail Language Support provides a debug adapter for the snail language in two pa
 
 \begin{wrapfigure}{r}{0.5\textwidth}
     \begin{center}
-        \includegraphics[width=0.5\textwidth]{dap-high-level.png}
+        \includegraphics[width=0.5\textwidth]{png/dap-highlevel.png}
         \caption{
             \centering 
             A high-level overview of VS Code, Snail Language Support, and snail debugging communication
@@ -475,7 +475,7 @@ Centralized version control systems also come with their downsides. First, a dev
 \begin{figure}
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{centralized-vcs.png}
+            \includegraphics[width=\textwidth]{png/centralized-vcs.png}
             \caption{
                 \centering 
                 A centralized version control system requires developers to submit individual file changes to a shared repository containing the software source code.
@@ -486,7 +486,7 @@ Centralized version control systems also come with their downsides. First, a dev
     \hspace{0.05\textwidth} 
     \begin{subfigure}[c][][c]{0.45\textwidth}
         \begin{center}
-            \includegraphics[width=\textwidth]{distributed-vcs.png}
+            \includegraphics[width=\textwidth]{png/distributed-vcs.png}
             \caption{
                 \centering 
                 A distributed version control system allows developers to share revised source code repositories directly with eachother, or through a shared server.
