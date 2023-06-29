@@ -456,35 +456,74 @@ Finally, in the \lstinline{debug} function, we define behavior for the DAP capab
 
 \section{Good Practices in Software Development}
 
+Software development is a growing industry where programmers work in teams to develop large, cohesive software to perform a variety of tasks, ranging from anywhere from gaming, healthcare, social media, and everything in between \cite{BusinessResearchCompany_2023}. With high quality software in high demand, software developing teams must know how to work together efficiently. There are a number of tools that software developers use to help produce high quality software. Two tools that the Snail Language Support extension emphasizes are version control and documentation.
 
+\subsection{Software Version Control}
 
-\subsection{Version Control}
+Software version control is a powerful tool in the software development world. In this section, we will first discuss why version control can be so valuable, and discuss a few different types of version control systems. We will discuss the version control systems of Git and GitHub in greater detail, and discuss how Snail Language Support makes use of Git and GitHub.
 
-\begin{itemize}
-    \item Why Version Control?
-        \begin{itemize}
-            \item Life without version control
-            \item Life with version control
-        \end{itemize}
-    \item Types of version control?
-        \begin{itemize}
-            \item mainly monolithic vs distributed
-        \end{itemize}
-    \item Git and GitHub
-        \begin{itemize}
-            \item History of Git
-            \item Why Git/what makes Git unique
-            \item What is GitHub
-            \item Why GitHub/what makes GitHub unique (can even just be that GitHub is super dominant)
-        \end{itemize}
-    \item Git and GitHub in Snail Language Support
-        \begin{itemize}
-            \item code stored in a repository
-            \item sharing branches
-            \item pull requests/code reviews
-            \item Snail Language Support Paper GitHub
-        \end{itemize}
-\end{itemize}
+\subsubsection{Introduction to Version Control Systems: Why Version Control?}
+
+A large challenge in developing software in teams is creating one cohesive software product when developement is done simultaneously by different programmers on different machines. Version control is the task of keeping a software consistent, maintainable, and stable, despite containing many different versions and configurations undergoing development in parallel. Many different version control \emph{systems} exist for developers today to automate version control tasks for a team. There are two primary types of version control systems: centralized version control systems (such as Apache Subversion) and distributed version control systems (such as git) \cite{Collins-SussmanFitzpatrickPilato_2004, ChaconStraub_2014}.
+
+In a centralized version control system, source code history is stored in a single, central server as shown in figure \ref{fig:centralized-vcs}. This central server is the ground truth of a code repository. A developer working on code stored in a centralized version control system must get individual files from the server, make changes, and check those changed files directly back to the central server.
+
+Centralized version control systems have the benefit of being straightforward, and easy for developers to understand. Additionally, having only one central server for source code history leaves no confusion as to where the software source code lies. 
+
+Centralized version control systems also come with their downsides. First, a developer must have an internet connection in order to make and test changes to a software. This is unfortunate for a developer who may like to do work when internet might not be available. Additionally, there are security risks associated with only maintaining one server of source code history. If the single server becomes vulnerable to attack, or if the server crashes for some reason, a software's entire history and existence can be lost. This lack of redundancy can be dangerous.\footnote{When first writing this paper, the author neglected to store the paper on anything other than his personal laptop. Upon the sudden and unexpected death of his laptop's CPU on the second to last day of finals week, the author was left with no SYE paper to his name, and was subsequently tasked with finishing his paper over the summer. As of writing this footnote, it is June 28th.}
+
+\begin{figure}
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{centralized-vcs.png}
+            \caption{
+                \centering 
+                A centralized version control system requires developers to submit individual file changes to a shared repository containing the software source code.
+            }
+            \label{fig:centralized-vcs}
+        \end{center}
+    \end{subfigure}
+    \hspace{0.05\textwidth} 
+    \begin{subfigure}[c][][c]{0.45\textwidth}
+        \begin{center}
+            \includegraphics[width=\textwidth]{distributed-vcs.png}
+            \caption{
+                \centering 
+                A distributed version control system allows developers to share revised source code repositories directly with eachother, or through a shared server.
+            }
+            \label{fig:distributed-vcs}
+        \end{center}
+    \end{subfigure}
+    \label{fig:version-control-systems}
+\end{figure}
+
+Distributed version control systems store source code history differently than centralized version control systems. Instead of maintaining a single history repository for source code, distributed version control systems allow developers to maintain local copies of a source code repository's entire history, as shown in figure \ref{fig:distributed-vcs}. When a developer wants to make changes to the repository, they copy the entire source code history to their machine, make changes to the relevant files, and share the revised repository history with the rest of their team members, either directly or through a shared server.
+
+Distributed version control systems allow developers to modify and test a piece of software without connecting to internet. Additionally, the redundancy of maintaining multiple copies of a source code repository's history ensures that the history is not lost when a single machine or server fails.
+
+Of course, distributed version control systems have their downsides as well. The architecture is a bit less intuitive than a centralized version control system, so it may be more confusing to understand. Additionally, with no physical ground truth source code repository, it may be difficult to track down the most up to date version of a software without proper organization. Further, when multiple developers modify source code repositories in different ways, there is a potential for both versions to conflict. This then requires methods to resolve these conflicts, which can prove to be rather complicated.
+
+\subsubsection{The Git Version Control System}
+
+Snail Language Support uses git as a version control system.\footnote{Much of the following information comes from Pro Git, by Scott Chacon and Ben Straub. It is available online for free (\url{https://git-scm.com/book/en/v2}), and is a great source for further investigation into git and GitHub.} The git version control system was developed in 2005 to aid in the development of the Linux kernel \cite{ChaconStraub_2014}. From its inception, git was meant to be a free, open-source alternative to commercial version control systems. Today, git has become one of the most popular version control systems on the planet, seeing use by over 90\% of all professional and hobby software developers, according to Stack Overflow's 2022 report \cite{StackOverflow_2022}. 
+
+Apart from being freely accessible to the public, git has a few features that have helped its rise in popularity. First, as a distributed version control system, developers have access to an entire code repository on their local development environments. This allows developers to make and test code changes when not connected to the internet. This also makes git actions feel lightning fast, as there is no communication to an external server required for most actions. 
+
+Many version control systems provide some support for branches during development. A branch of a code repository is a software version that diverges and can be developed in parallel to a main version. For example, the stable version of a software is often contained on a branch called \lstinline{main}. When developing a new feature to add to this software, a feature can be developed on a branch called \lstinline{feature}, which diverges from \lstinline{main}. Development on \lstinline{feature} can be done safely and separately from \lstinline{main}, and changes can be applied (or \emph{merged}) into \lstinline{main} once the feature is complete.
+
+Git also provides support for branching development. Unlike most version control systems though, git branching operations are super quick. Developers can create and switch between branches within seconds, encouraging developers to take full advantage branches during development. 
+
+\subsubsection{Git in Snail Language Support}
+
+Snail Language Support uses git as its version control system. Snail Langauge Support makes use of git features in a few key ways throughout development.
+
+First, the Snail Language Support git repository is stored on GitHub. GitHub is a website that allows developers to host their git repositories. As of 2018, GitHub was home to 100 million git repositories all over the world \cite{Warner_2018}. This made it easy to share changes made to Snail Language Support when asking for advice on how to pursue further development.\footnote{As previously mentioned, the \LaTeX source code for this paper is also hosted on GitHub.}
+
+Snail Language Support development benefitted greatly from the use of branches. Once a semi-functional extension was developed, further feature and bugfix development took place in branches. This helped isolate different development ideas, which aided during debugging when code was not performing as expected. These branches were shared on GitHub.
+
+Snail Language Support development also took advantage of two other GitHub features: pull requests and code reviews. A pull request is a way to merge a \lstinline{feature} branch back into a \lstinline{main} branch. It allows a user without direct write access to modify a repository by submitting changes and asking the repository owner to accept those changes. Often, before accepting the changes laid out in a PR, another developer will review the changes made in the code in a code review. A code reviewer can choose to approve the changes outright or ask for further modifications. Once a code review is approved, the pull request is typically merged back into the \lstinline{main} branch of the repository. 
+
+Snail Language Support also uses GitHub's issue tracking system. GitHub's issue tracking system allows developers and users of a git repository to note certain issues with a repository. This might include ideas for future features or documentation of bug fixes. For Snail Language Support, this allowed developers and advisors to create easily accessible documentation of problems and potential fixes. By documenting these issues on GitHub, they are also easily accessible for future developers of the repository. 
 
 \subsection{Documentation}
 
