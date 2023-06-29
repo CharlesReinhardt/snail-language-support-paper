@@ -527,29 +527,39 @@ Snail Language Support also uses GitHub's issue tracking system. GitHub's issue 
 
 \subsection{Software Documentation}
 
-\begin{itemize}
-    \item What is software documentation?
-        \begin{itemize}
-            \item types of documentation: Internal vs external
-            \item forms of documentation: text, images, diagrams
-        \end{itemize}
-    \item Documentation in Snail Language Support
-        \begin{itemize}
-            \item USING documentation for development
-                \begin{itemize}
-                    \item VS Code docs
-                    \item git docs
-                    \item markdown and mermaid docs
-                \end{itemize}
-            \item CREATING documentation for the extension
-                \begin{itemize}
-                    \item markdown
-                    \item mermaid diagrams
-                    \item drawio
-                    \item creating documentation is hard
-                \end{itemize}
-        \end{itemize}
-\end{itemize}
+Software documentation is a useful, but underappreciated aspect of the software development role. Software documentation is an essential piece of any software product. This section now describes software documentation in more detail, as well as touching on how documentation is used in Snail Language Support.
+
+\subsubsection{What is Software Documentation?}
+
+Software documentation is any sort of recorded, accessible information that describes a piece of software. This might be a user manual that a customer recieves along with a software product, or a file outlining how other developers might be able to contribute to an open source project. 
+
+Most software documentation can be split between two types: internal vs. external. Internal software documentation is created by developers, for developers. This documentation is only accessible to developers of a software, and might be more complicated in nature. They might record known bugs in the software, or might outline the architecture of a service to help developers understand the minutia of how a service operates.
+
+External software is meant for a non-developer, such as a consumer of a software product. This documentation is likely written in less technical language, and is meant to give a user an overarching idea of a software, without revealing too many internal details. This might coem in the form of a user manual or video guides.
+
+Both internal and external software documentation can take many forms. Software documentation might come in the form of written text, plain or formatted, in collections of files and manuals. Documentation might also include sample images of user interfaces or diagrams that outline software interactions or control flow. Many tools exist to help developers produce useful documentation.
+
+\subsubsection{Documentation in Snail Language Support}
+
+Using documentation formed a huge role in the development of the Snail Language Support extension. We used the VS Code documentation for starter guides on how to build VS Code extensions. The documentation even had numerous sample extensions for various general exstension purposes that were useful to build on top of. Documentation also contained granular details on various options and specific functionality of the extension API. Similar documentation also exists for the language server protocol (LSP) and debug adapter protocol (DAP). Some of this documentation is hosted on VS Code's documentation website, but most is hosted on a separate website. 
+
+During development, Snail Language Support developers also made use of git documentation to look up specific syntax of commands. Some of this documentation is available while using git command line tools by passing the \lstinline{--help} flag.
+
+Snail Language Support also creates documentation for the extension. One of the central goals of Snail Language Support development was to prioritize creating documentation during development. To do this, Snail Language Support leverages a few different documentation tools: Markdown, mermaidJS, and drawio. 
+
+Markdown is a plain text syntax that takes lightly marked-up text and converts it to clean HTML \cite{Gruber_2004}. The syntax is designed to be lightweight, allowing text files written with Markdown syntax to still be fully legible without converting to HTML. Since it's birth in 2004, Markdown has seen widespread, mainstream adoption across the industry. Popular tools like GitHub and VS Code offer built-in support for Markdown syntax \cite{GitHub_2023, Microsoft_2023k}. Markdown syntax has also strongly influenced the R Markdown syntax for R programming \cite{RStudio_2020}. 
+
+Snail Language Support uses Markdown to create a \lstinline{README.md} which describes valuable information about the extension for users and developers. Snail Language Support developers also used Markdown files as notepads to write down thoughts and discoveries during development. The hope in keeping these files around is that they may provide some valuable insight during future development.
+
+In presenting the Snail Language Support extension (in posters, presentations, and this paper), we found the Mermaid diagramming tool quite helpful. Mermaid is a tool that allows developers to create high quality diagrams using Markdown-inspired text \cite{MermaidJS_2023a}. Mermaid diagrams can be developed in Mermaid's online editor, using third-party plug ins, or by using Mermaid's API in JavaScript files \cite{MermaidJS_2023b}. 
+
+We use the third-party Markdown Preview Mermaid Support extension for VS Code to develop Mermaid diagrams in Markdown files \cite{Bierner_2023}. From there, we use the official mermaid command line tool \lstinline{mermaid-cli} to convert the Markdown file to a \lstinline{.png} file \cite{MermaidJS_2023c}. We use this workflow to develop Mermaid sequence diagrams such as those pictured in figure \ref{fig:language-server} and figure \ref{fig:lsp-sequence}. 
+
+We also made use of a web-based diagramming tool called draw.io. Draw.io is a free, open source diagramming tool that runs in a web browser \cite{drawio_2023}. Draw.io provides a simple and easy-to-use user interface to allow developers to create high quality, customisable diagrams quickly. We use the third-party Draw.io Integration extension for VS Code to create and export draw.io diagrams into \lstinline{.png} files \cite{Dieterichs_2023}. This allows us to easily create diagrams such as those seen in figure \ref{fig:directory-structure} and figure \ref{fig:lsp}.
+
+Despite software documentation being one of the central goals of Snail Language Support, we found it difficult to generate high quality documentation. First, it was difficult to motivate ourselves to generate documentation during development. Instead of documenting steps taken while troubleshooting, we found it easier to save time in the short term to continue developing the extension. Ultimately, this would result in longer development time as we would have to repeat unsuccessful troubleshooting steps when encountering similar issues in the future.
+
+We also didn't realize how difficult making good documentation actually is. As frequent users of documentation, we know what lackluster documentation looks like when we see it. However, when trying to make documentation for Snail Language Support, we didn't realize the attention to detail and thoroughness that is required to generate high quality documentation for a piece of software. After developing Snail Language Support, we have a newfound appreciation for high quality documentation. 
 
 \section{Conclusions}
 
