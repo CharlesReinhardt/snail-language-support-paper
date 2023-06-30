@@ -8,8 +8,9 @@ sequenceDiagram
     participant L as Language Server
 
     U ->> V: Open a program written in snail
-    activate L
     V ->> L: Activate snail language server
+    activate L
+
 
     V ->> L: Provide target snail program to verify
     L -->> L: Parse target snail program
